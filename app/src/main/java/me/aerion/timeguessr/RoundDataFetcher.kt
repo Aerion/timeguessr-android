@@ -1,5 +1,6 @@
 package me.aerion.timeguessr
 
+import com.google.android.gms.maps.model.LatLng
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
@@ -20,7 +21,11 @@ data class RoundData(
 data class Location(
     val lat: Double,
     val lng: Double
-)
+) {
+    fun toLatLng(): LatLng {
+        return LatLng(this.lat, this.lng)
+    }
+}
 
 interface RoundDataFetcher {
     fun fetchRounds(): List<RoundData>?
