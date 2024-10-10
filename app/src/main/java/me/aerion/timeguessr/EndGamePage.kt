@@ -6,7 +6,11 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.width
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Share
 import androidx.compose.material3.Button
+import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -66,11 +70,14 @@ fun EndGamePage(
             }
         ) {
             Text("Share results")
+            Spacer(modifier = Modifier.width(4.dp))
+            Icon(Icons.Default.Share, modifier = Modifier.width(18.dp), contentDescription = null)
         }
     }
 }
 
 @Preview(showBackground = true)
+@Preview("French", locale = "fr-FR", showBackground = true)
 @Composable
 fun EndGamePagePreview() {
     EndGamePage(
