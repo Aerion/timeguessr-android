@@ -39,8 +39,14 @@ class MainActivity : ComponentActivity() {
                     rounds = rounds.value!!,
                     modifier = Modifier.fillMaxSize()
                 )
+
+                BackHandlerWithConfirmation(
+                    title = "Exit TimeGuessr?",
+                    text = "Are you sure you want to exit TimeGuessr?",
+                    onConfirm = { finish() },
+                    onDismiss = { /* Do nothing */ }
+                )
             }
         }
     }
 }
-
