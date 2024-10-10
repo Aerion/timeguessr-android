@@ -5,6 +5,8 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -15,9 +17,10 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import me.aerion.timeguessr.ui.theme.TimeguessrTheme
 
-
 // TODO: Restrict api key
-// TODO: Colors
+// TODO: Daily number
+// TODO: Dark mode
+// TODO: Logo
 
 enum class Page {
     RoundPlayPage,
@@ -32,71 +35,81 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
-            TimeguessrTheme {
-                val rounds = remember { mutableStateOf<List<RoundData>?>(null) }
-                var currentPage by remember { mutableStateOf(Page.RoundPlayPage) }
-                var currentRoundIndex by remember { mutableIntStateOf(0) }
-                var roundResults by remember { mutableStateOf<List<RoundResult>>(emptyList()) }
+            TimeguessrTheme(dynamicColor = false) {
+                Surface(
+                    color = MaterialTheme.colorScheme.background,
+                    modifier = Modifier.fillMaxSize()
+                ) {
+                    val rounds = remember { mutableStateOf<List<RoundData>?>(null) }
+                    var currentPage by remember { mutableStateOf(Page.RoundPlayPage) }
+                    var currentRoundIndex by remember { mutableIntStateOf(0) }
+                    var roundResults by remember { mutableStateOf<List<RoundResult>>(emptyList()) }
 
-                LaunchedEffect(Unit) {
-                    rounds.value = roundDataSource.fetchRounds()
-                }
+                    LaunchedEffect(Unit) {
+                        rounds.value = roundDataSource.fetchRounds()
+                    }
 
-                // Show a loader while the data is being fetched
-                if (rounds.value == null) {
-                    Text("Loading...")
-                    return@TimeguessrTheme
-                }
+                    // Show a loader while the data is being fetched
+                    if (rounds.value == null) {
+                        Text("Loading...")
+                        return@Surface
+                    }
 
-                val currentRound = rounds.value!![currentRoundIndex]
-                val totalScore = roundResults.sumOf { it.totalScore }
+                    val currentRound = rounds.value!![currentRoundIndex]
+                    val totalScore = roundResults.sumOf { it.totalScore }
 
-                when (currentPage) {
-                    Page.RoundPlayPage -> RoundPlayPage(
-                        round = currentRound,
-                        currentRoundIndex = currentRoundIndex,
-                        totalScore = totalScore,
-                        onRoundSubmit = { guess ->
-                            roundResults = roundResults + RoundResult(
-                                yearScore = computeYearScore(guess.year, currentRound.Year.toInt()),
-                                distanceScore = computeDistanceScore(
-                                    guess.position.latitude,
-                                    guess.position.longitude,
-                                    currentRound.Location.lat,
-                                    currentRound.Location.lng
-                                ),
-                                guess = guess,
-                            )
-                            currentPage = Page.RoundResultPage
-                        },
-                        modifier = Modifier.fillMaxSize()
-                    )
-                    Page.RoundResultPage -> RoundResultPage(
-                        round = currentRound,
-                        roundResult = roundResults.last(),
-                        modifier = Modifier.fillMaxSize(),
-                        onNextRound = {
-                            if (currentRoundIndex < rounds.value!!.size - 1) {
-                                currentRoundIndex++
-                                currentPage = Page.RoundPlayPage
-                            } else {
-                                currentPage = Page.EndGamePage
+                    when (currentPage) {
+                        Page.RoundPlayPage -> RoundPlayPage(
+                            round = currentRound,
+                            currentRoundIndex = currentRoundIndex,
+                            totalScore = totalScore,
+                            onRoundSubmit = { guess ->
+                                roundResults = roundResults + RoundResult(
+                                    yearScore = computeYearScore(
+                                        guess.year,
+                                        currentRound.Year.toInt()
+                                    ),
+                                    distanceScore = computeDistanceScore(
+                                        guess.position.latitude,
+                                        guess.position.longitude,
+                                        currentRound.Location.lat,
+                                        currentRound.Location.lng
+                                    ),
+                                    guess = guess,
+                                )
+                                currentPage = Page.RoundResultPage
+                            },
+                            modifier = Modifier.fillMaxSize()
+                        )
+
+                        Page.RoundResultPage -> RoundResultPage(
+                            round = currentRound,
+                            roundResult = roundResults.last(),
+                            modifier = Modifier.fillMaxSize(),
+                            onNextRound = {
+                                if (currentRoundIndex < rounds.value!!.size - 1) {
+                                    currentRoundIndex++
+                                    currentPage = Page.RoundPlayPage
+                                } else {
+                                    currentPage = Page.EndGamePage
+                                }
                             }
-                        }
-                    )
-                    Page.EndGamePage -> EndGamePage(
-                        roundResults = roundResults,
-                        dailyNumber = 123,
-                        modifier = Modifier.fillMaxSize()
+                        )
+
+                        Page.EndGamePage -> EndGamePage(
+                            roundResults = roundResults,
+                            dailyNumber = 123,
+                            modifier = Modifier.fillMaxSize()
+                        )
+                    }
+
+                    BackHandlerWithConfirmation(
+                        title = "Exit TimeGuessr?",
+                        text = "Are you sure you want to exit TimeGuessr?",
+                        onConfirm = { finish() },
+                        onDismiss = { /* Do nothing */ }
                     )
                 }
-
-                BackHandlerWithConfirmation(
-                    title = "Exit TimeGuessr?",
-                    text = "Are you sure you want to exit TimeGuessr?",
-                    onConfirm = { finish() },
-                    onDismiss = { /* Do nothing */ }
-                )
             }
         }
     }

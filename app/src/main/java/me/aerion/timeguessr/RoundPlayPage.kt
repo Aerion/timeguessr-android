@@ -97,6 +97,7 @@ fun RoundPlayPage(round: RoundData, onRoundSubmit: (Guess) -> Unit,
 }
 
 @Preview(showBackground = true)
+@Preview("French", locale = "fr-FR", showBackground = true)
 @Composable
 fun RoundPlayPagePreview() {
     RoundPlayPage(
