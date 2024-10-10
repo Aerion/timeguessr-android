@@ -1,7 +1,9 @@
 package me.aerion.timeguessr
 
-fun computeYearScore(yearInput: String, actualYear: String): Int {
-    val yearsOff = kotlin.math.abs(yearInput.toInt() - actualYear.toInt())
+import android.location.Location
+
+fun computeYearScore(year1: Number, year2: Number): Int {
+    val yearsOff = kotlin.math.abs(year1.toInt() - year2.toInt())
     return when (yearsOff) {
         0 -> 5000
         1 -> 4950
@@ -17,7 +19,23 @@ fun computeYearScore(yearInput: String, actualYear: String): Int {
     }
 }
 
-fun computeDistanceScore(distanceInMeters: Float): Int {
+fun computeDistanceScore(
+    latitude1: Double,
+    longitude1: Double,
+    latitude2: Double,
+    longitude2: Double
+): Int {
+    val distance = FloatArray(1)
+    Location.distanceBetween(
+        latitude1,
+        longitude1,
+        latitude2,
+        longitude2,
+        distance
+    )
+
+    val distanceInMeters = distance[0]
+
     return when {
         distanceInMeters <= 50 -> 5000
         distanceInMeters <= 1000 -> 5000 - (distanceInMeters * 0.02).toInt()

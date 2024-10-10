@@ -1,6 +1,7 @@
 package me.aerion.timeguessr
 
 import android.annotation.SuppressLint
+import android.location.Location
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -21,7 +22,7 @@ import me.saket.telephoto.zoomable.coil.ZoomableAsyncImage
 
 @SuppressLint("UnrememberedMutableState")
 @Composable
-fun ResultModal(
+fun RoundResultPage(
     onDismiss: () -> Unit,
     roundData: RoundData,
     positionGuess: LatLng,

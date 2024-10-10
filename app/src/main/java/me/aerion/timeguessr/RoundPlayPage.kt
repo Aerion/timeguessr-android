@@ -9,8 +9,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Done
 import androidx.compose.material.icons.filled.Face
 import androidx.compose.material.icons.filled.Place
-import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Tab
 import androidx.compose.material3.TabRow
@@ -21,30 +19,28 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.google.android.gms.maps.model.LatLng
-import com.google.maps.android.compose.MarkerState
+import java.text.NumberFormat
 
 @Composable
-fun RoundPlayPage(rounds: List<RoundData>, modifier: Modifier = Modifier) {
+fun RoundPlayPage(round: RoundData, onRoundSubmit: (Guess) -> Unit,
+                  totalScore: Int, currentRoundIndex: Int,
+                  modifier: Modifier = Modifier) {
     var positionGuess by rememberSaveable { mutableStateOf<LatLng?>(null) }
     var selectedTabIndex by rememberSaveable { mutableIntStateOf(0) }
-    var totalScore by rememberSaveable { mutableIntStateOf(0) }
-    var currentRoundIndex by rememberSaveable { mutableIntStateOf(0) }
-    var showModal by rememberSaveable { mutableStateOf(false) }
     var year by rememberSaveable { mutableStateOf("") }
 
-    val currentRound = rounds[currentRoundIndex]
+    val totalScoreString = NumberFormat.getNumberInstance().format(totalScore)
 
     Column(modifier.fillMaxSize()) {
         // Display current score and progress
         Text(
-            text = "Score: $totalScore | Round: ${currentRoundIndex + 1}/${rounds.size}",
+            text = "Score: $totalScoreString | Round: ${currentRoundIndex + 1}/5",
             modifier = Modifier.padding(16.dp)
         )
 
@@ -52,27 +48,18 @@ fun RoundPlayPage(rounds: List<RoundData>, modifier: Modifier = Modifier) {
             modifier = Modifier.weight(1f)
         ) {
             when (selectedTabIndex) {
-                0 -> PhotoPage(currentRound, modifier)
+                0 -> PhotoPage(round, modifier)
                 1 -> MapPage(
                     onPositionGuessChange = { positionGuess = it },
                     positionGuess = positionGuess,
                     modifier = modifier
                 )
                 2 -> GuessPage(
-                    roundData = currentRound,
                     positionGuess = positionGuess,
                     year = year,
                     onYearChange = { year = it },
-                    onSubmitGuess = { score ->
-                        totalScore += score
-                        if (currentRoundIndex < rounds.size - 1) {
-                            currentRoundIndex++
-                            selectedTabIndex = 0
-                            positionGuess = null
-                            year = ""
-                        } else {
-                            showModal = true
-                        }
+                    onSubmitGuess = {
+                        onRoundSubmit(Guess(year.toInt(), positionGuess!!))
                     },
                     modifier = modifier
                 )
@@ -107,34 +94,22 @@ fun RoundPlayPage(rounds: List<RoundData>, modifier: Modifier = Modifier) {
             }
         }
     }
-
-    if (showModal) {
-        AlertDialog(
-            onDismissRequest = { showModal = false },
-            title = { Text("Total Score") },
-            text = { Text("Your total score is $totalScore") },
-            confirmButton = {
-                Button(onClick = { showModal = false }) {
-                    Text("OK")
-                }
-            }
-        )
-    }
 }
 
 @Preview(showBackground = true)
 @Composable
 fun RoundPlayPagePreview() {
     RoundPlayPage(
-        rounds = listOf(
-            RoundData(
-                URL = "https://images.timeguessr.com/f58f4502-e13a-47e6-a7dd-f223951da34e.webp",
-                Year = "2019",
-                Location = Location(lat = 27.4722200350407, lng = 89.63841250287706),
-                Description = "Two men carrying a painting of the King of Bhutan's family down a street in Thimphu, Bhutan.",
-                License = "Keren Su/China Span / Alamy Stock Photo",
-                Country = "Bhutan"
-            )
-        )
+        round = RoundData(
+            URL = "https://images.timeguessr.com/f58f4502-e13a-47e6-a7dd-f223951da34e.webp",
+            Year = "2019",
+            Location = Location(lat = 27.4722200350407, lng = 89.63841250287706),
+            Description = "Two men carrying a painting of the King of Bhutan's family down a street in Thimphu, Bhutan.",
+            License = "Keren Su/China Span / Alamy Stock Photo",
+            Country = "Bhutan"
+        ),
+        onRoundSubmit = {},
+        totalScore = 12345,
+        currentRoundIndex = 2
     )
 }
