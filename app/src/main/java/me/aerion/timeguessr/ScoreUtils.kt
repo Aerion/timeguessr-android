@@ -48,3 +48,27 @@ fun computeDistanceScore(
         else -> 12
     }
 }
+
+fun getGeoScoreString(score: Int): String {
+    return when (score) {
+        5000 -> "🌎🟩🟩🟩 "
+        in 4751..4999 -> "🌎🟩🟩🟨 "
+        in 4501..4750 -> "🌎🟩🟩⬛️ "
+        in 4251..4500 -> "🌎🟩🟨⬛️ "
+        in 3501..4250 -> "🌎🟩⬛️⬛️ "
+        in 2501..3500 -> "🌎🟨⬛️⬛️ "
+        else -> "🌎⬛️⬛️⬛️ "
+    }
+}
+
+fun getTimeScoreString(score: Int): String {
+    return when (score) {
+        5000 -> "📅🟩🟩🟩"
+        4950, 4800 -> "📅🟩🟩🟨"
+        4600, 4300 -> "📅🟩🟩⬛"
+        3900, 3400 -> "📅🟩🟨⬛"
+        2500, 2000 -> "📅🟩⬛⬛"
+        1000 -> "📅🟨⬛️⬛️"
+        else -> "📅⬛️⬛️⬛️"
+    }
+}

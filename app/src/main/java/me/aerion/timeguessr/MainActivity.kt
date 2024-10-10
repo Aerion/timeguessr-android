@@ -18,7 +18,6 @@ import me.aerion.timeguessr.ui.theme.TimeguessrTheme
 
 // TODO: Restrict api key
 // TODO: Colors
-// TODO: Emoji result
 
 enum class Page {
     RoundPlayPage,
@@ -85,14 +84,11 @@ class MainActivity : ComponentActivity() {
                             }
                         }
                     )
-                    /*Page.EndGamePage -> EndGamePage(
-                        modifier = Modifier.fillMaxSize(),
-                        onRestart = {
-                            currentRoundIndex = 0
-                            currentPage = Page.RoundPlayPage
-                        }
-                    )*/
-                    else -> {}
+                    Page.EndGamePage -> EndGamePage(
+                        roundResults = roundResults,
+                        dailyNumber = 123,
+                        modifier = Modifier.fillMaxSize()
+                    )
                 }
 
                 BackHandlerWithConfirmation(
