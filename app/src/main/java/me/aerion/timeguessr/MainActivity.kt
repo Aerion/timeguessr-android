@@ -72,7 +72,7 @@ class MainActivity : ComponentActivity() {
                         },
                         modifier = Modifier.fillMaxSize()
                     )
-                    /*Page.RoundResultPage -> RoundResultPage(
+                    Page.RoundResultPage -> RoundResultPage(
                         round = currentRound,
                         roundResult = roundResults.last(),
                         modifier = Modifier.fillMaxSize(),
@@ -85,7 +85,7 @@ class MainActivity : ComponentActivity() {
                             }
                         }
                     )
-                    Page.EndGamePage -> EndGamePage(
+                    /*Page.EndGamePage -> EndGamePage(
                         modifier = Modifier.fillMaxSize(),
                         onRestart = {
                             currentRoundIndex = 0
