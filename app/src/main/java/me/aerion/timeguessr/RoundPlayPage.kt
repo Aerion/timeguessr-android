@@ -107,7 +107,8 @@ fun RoundPlayPagePreview() {
             Location = Location(lat = 27.4722200350407, lng = 89.63841250287706),
             Description = "Two men carrying a painting of the King of Bhutan's family down a street in Thimphu, Bhutan.",
             License = "Keren Su/China Span / Alamy Stock Photo",
-            Country = "Bhutan"
+            Country = "Bhutan",
+            No = "123"
         ),
         onRoundSubmit = {},
         totalScore = 12345,

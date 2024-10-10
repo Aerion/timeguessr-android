@@ -19,7 +19,6 @@ import me.aerion.timeguessr.ui.theme.TimeguessrTheme
 
 // TODO: Restrict api key
 // TODO: Daily number
-// TODO: Dark mode
 // TODO: Logo
 
 enum class Page {
@@ -29,7 +28,7 @@ enum class Page {
 }
 
 class MainActivity : ComponentActivity() {
-    private val roundDataSource: RoundDataFetcher = StubbedRoundDataFetcher()
+    private val roundDataSource: RoundDataFetcher = NetworkRoundDataFetcher()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
