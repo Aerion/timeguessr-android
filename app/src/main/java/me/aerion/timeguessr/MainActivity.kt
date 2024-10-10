@@ -20,6 +20,8 @@ import me.aerion.timeguessr.ui.theme.TimeguessrTheme
 // TODO: Restrict api key
 // TODO: Daily number
 // TODO: Logo
+// TODO: Change icons
+// TODO: Vertical tabs
 
 enum class Page {
     RoundPlayPage,
@@ -97,7 +99,7 @@ class MainActivity : ComponentActivity() {
 
                         Page.EndGamePage -> EndGamePage(
                             roundResults = roundResults,
-                            dailyNumber = 123,
+                            dailyNumber = currentRound.No.toInt(),
                             modifier = Modifier.fillMaxSize()
                         )
                     }
