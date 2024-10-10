@@ -21,7 +21,9 @@ import me.aerion.timeguessr.ui.theme.TimeguessrTheme
 // TODO: Daily number
 // TODO: Logo
 // TODO: Change icons
-// TODO: Vertical tabs
+// TODO: Handle state reset when orientation changes on round result page
+// TODO: Handle round reset when orientation changes on round play page
+// TODO: Display marker result in different color
 
 enum class Page {
     RoundPlayPage,
