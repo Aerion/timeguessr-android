@@ -22,7 +22,6 @@ import me.saket.telephoto.zoomable.coil.ZoomableAsyncImage
 @SuppressLint("UnrememberedMutableState")
 @Composable
 fun ResultModal(
-    showModal: Boolean,
     onDismiss: () -> Unit,
     roundData: RoundData,
     positionGuess: LatLng,
@@ -30,39 +29,37 @@ fun ResultModal(
     yearScore: Int,
     distanceScore: Int
 ) {
-    if (showModal) {
-        AlertDialog(
-            onDismissRequest = onDismiss,
-            title = { Text("Results") },
-            text = {
-                Column {
-                    Text("Total Score: $score")
-                    Text("Year Score: $yearScore")
-                    Text("Distance Score: $distanceScore")
-                    Spacer(modifier = Modifier.height(16.dp))
-                    ZoomableAsyncImage(
-                        model = roundData.URL,
-                        contentDescription = null,
-                        modifier = Modifier.fillMaxWidth().height(200.dp)
-                    )
-                    Spacer(modifier = Modifier.height(16.dp))
-                    val cameraPositionState = rememberCameraPositionState {
-                        position = CameraPosition.fromLatLngZoom(roundData.Location.toLatLng(), 4f)
-                    }
-                    GoogleMap(
-                        modifier = Modifier.fillMaxWidth().height(200.dp),
-                        cameraPositionState = cameraPositionState
-                    ) {
-                        AdvancedMarker(state = MarkerState(position = roundData.Location.toLatLng()))
-                        AdvancedMarker(state = MarkerState(position = positionGuess))
-                    }
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        title = { Text("Results") },
+        text = {
+            Column {
+                Text("Total Score: $score")
+                Text("Year Score: $yearScore")
+                Text("Distance Score: $distanceScore")
+                Spacer(modifier = Modifier.height(16.dp))
+                ZoomableAsyncImage(
+                    model = roundData.URL,
+                    contentDescription = null,
+                    modifier = Modifier.fillMaxWidth().height(200.dp)
+                )
+                Spacer(modifier = Modifier.height(16.dp))
+                val cameraPositionState = rememberCameraPositionState {
+                    position = CameraPosition.fromLatLngZoom(roundData.Location.toLatLng(), 4f)
                 }
-            },
-            confirmButton = {
-                Button(onClick = onDismiss) {
-                    Text("OK")
+                GoogleMap(
+                    modifier = Modifier.fillMaxWidth().height(200.dp),
+                    cameraPositionState = cameraPositionState
+                ) {
+                    AdvancedMarker(state = MarkerState(position = roundData.Location.toLatLng()))
+                    AdvancedMarker(state = MarkerState(position = positionGuess))
                 }
             }
-        )
-    }
+        },
+        confirmButton = {
+            Button(onClick = onDismiss) {
+                Text("OK")
+            }
+        }
+    )
 }

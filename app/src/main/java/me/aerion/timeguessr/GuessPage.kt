@@ -32,14 +32,14 @@ import com.google.android.gms.maps.model.LatLng
 @Composable
 fun GuessPage(
     roundData: RoundData,
-    positionGuess: LatLng,
+    positionGuess: LatLng?,
     year: String,
     onYearChange: (String) -> Unit,
     onSubmitGuess: (Int) -> Unit,
     modifier: Modifier = Modifier
 ) {
     val keyboardController = LocalSoftwareKeyboardController.current
-    val isSubmitEnabled = year.isNotEmpty() && positionGuess.latitude != 0.0 && positionGuess.longitude != 0.0
+    val isSubmitEnabled = year.isNotEmpty() && positionGuess != null
     var showModal by remember { mutableStateOf(false) }
     var score by remember { mutableIntStateOf(0) }
     var yearScore by remember { mutableIntStateOf(0) }
@@ -74,7 +74,7 @@ fun GuessPage(
                 Location.distanceBetween(
                     roundData.Location.lat,
                     roundData.Location.lng,
-                    positionGuess.latitude,
+                    positionGuess!!.latitude,
                     positionGuess.longitude,
                     distance
                 )
@@ -91,18 +91,19 @@ fun GuessPage(
         }
     }
 
-    ResultModal(
-        showModal = showModal,
-        onDismiss = {
-            showModal = false
-            onSubmitGuess(score)
-        },
-        roundData = roundData,
-        positionGuess = positionGuess,
-        score = score,
-        yearScore = yearScore,
-        distanceScore = distanceScore
-    )
+    if (showModal) {
+        ResultModal(
+            onDismiss = {
+                showModal = false
+                onSubmitGuess(score)
+            },
+            roundData = roundData,
+            positionGuess = positionGuess!!,
+            score = score,
+            yearScore = yearScore,
+            distanceScore = distanceScore
+        )
+    }
 }
 
 

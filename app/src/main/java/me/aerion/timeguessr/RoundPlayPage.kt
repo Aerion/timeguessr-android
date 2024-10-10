@@ -22,6 +22,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
@@ -31,13 +32,12 @@ import com.google.maps.android.compose.MarkerState
 
 @Composable
 fun RoundPlayPage(rounds: List<RoundData>, modifier: Modifier = Modifier) {
-    var positionGuess by remember { mutableStateOf(LatLng(0.0, 0.0)) }
-    var markerStateGuess by remember { mutableStateOf<MarkerState?>(null) }
-    var selectedTabIndex by remember { mutableIntStateOf(0) }
-    var totalScore by remember { mutableIntStateOf(0) }
-    var currentRoundIndex by remember { mutableIntStateOf(0) }
-    var showModal by remember { mutableStateOf(false) }
-    var year by remember { mutableStateOf("") }
+    var positionGuess by rememberSaveable { mutableStateOf<LatLng?>(null) }
+    var selectedTabIndex by rememberSaveable { mutableIntStateOf(0) }
+    var totalScore by rememberSaveable { mutableIntStateOf(0) }
+    var currentRoundIndex by rememberSaveable { mutableIntStateOf(0) }
+    var showModal by rememberSaveable { mutableStateOf(false) }
+    var year by rememberSaveable { mutableStateOf("") }
 
     val currentRound = rounds[currentRoundIndex]
 
@@ -55,11 +55,9 @@ fun RoundPlayPage(rounds: List<RoundData>, modifier: Modifier = Modifier) {
                 0 -> PhotoPage(currentRound, modifier)
                 1 -> MapPage(
                     onPositionGuessChange = { positionGuess = it },
-                    markerStateGuess = markerStateGuess,
-                    onMarkerStateGuessChange = { markerStateGuess = it },
+                    positionGuess = positionGuess,
                     modifier = modifier
                 )
-
                 2 -> GuessPage(
                     roundData = currentRound,
                     positionGuess = positionGuess,
@@ -70,9 +68,7 @@ fun RoundPlayPage(rounds: List<RoundData>, modifier: Modifier = Modifier) {
                         if (currentRoundIndex < rounds.size - 1) {
                             currentRoundIndex++
                             selectedTabIndex = 0
-                            positionGuess = LatLng(0.0, 0.0)
-                            year = ""
-                            markerStateGuess = null
+                            positionGuess = null
                             year = ""
                         } else {
                             showModal = true

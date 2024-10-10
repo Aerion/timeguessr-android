@@ -1,5 +1,6 @@
 package me.aerion.timeguessr
 
+import android.annotation.SuppressLint
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -11,14 +12,14 @@ import com.google.maps.android.compose.MapUiSettings
 import com.google.maps.android.compose.MarkerState
 import com.google.maps.android.compose.rememberCameraPositionState
 
+@SuppressLint("UnrememberedMutableState")
 @Composable
 fun MapPage(
     onPositionGuessChange: (LatLng) -> Unit,
-    markerStateGuess: MarkerState?,
-    onMarkerStateGuessChange: (MarkerState?) -> Unit,
+    positionGuess: LatLng?,
     modifier: Modifier = Modifier
 ) {
-    val initialLocation = LatLng(51.48633971492552, 3.691691980292835)
+    val initialLocation = positionGuess ?: LatLng(51.48633971492552, 3.691691980292835)
     val cameraPositionState = rememberCameraPositionState {
         position = CameraPosition.fromLatLngZoom(initialLocation, 4f)
     }
@@ -33,13 +34,12 @@ fun MapPage(
         ),
         onMapClick = { position ->
             onPositionGuessChange(position)
-            onMarkerStateGuessChange(MarkerState(position = position))
         }
     ) {
         // Show the guess from the user
-        if (markerStateGuess != null) {
+        if (positionGuess != null) {
             AdvancedMarker(
-                state = markerStateGuess,
+                state = MarkerState(position = positionGuess),
             )
         }
     }
