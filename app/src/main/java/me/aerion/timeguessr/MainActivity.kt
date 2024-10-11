@@ -20,9 +20,8 @@ import me.aerion.timeguessr.ui.theme.TimeguessrTheme
 // TODO: Restrict api key
 // TODO: Logo
 // TODO: Change splashscreen
-// TODO: Change icons of tabs
-// TODO: Display marker result in different color
-// TODO: Style the round result page (+landscape mode)
+// TODO: Style the pages and handle landscape: EndGamePage, GuessPage, RoundResultPage, text of RoundPlayPage
+// TODO: Add result map with all of the guesses
 
 enum class Page {
     RoundPlayPage,

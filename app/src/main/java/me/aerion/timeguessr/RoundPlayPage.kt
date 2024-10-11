@@ -9,7 +9,9 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Done
-import androidx.compose.material.icons.filled.Face
+import androidx.compose.material.icons.filled.Image
+import androidx.compose.material.icons.filled.Lightbulb
+import androidx.compose.material.icons.filled.Map
 import androidx.compose.material.icons.filled.Place
 import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationRail
@@ -54,19 +56,19 @@ fun RoundPlayPage(
                 NavigationRailItem(
                     selected = selectedTabIndex == 0,
                     onClick = { selectedTabIndex = 0 },
-                    icon = { Icon(imageVector = Icons.Default.Face, contentDescription = null) },
+                    icon = { Icon(imageVector = Icons.Default.Image, contentDescription = null) },
                     label = { Text("Photo") }
                 )
                 NavigationRailItem(
                     selected = selectedTabIndex == 1,
                     onClick = { selectedTabIndex = 1 },
-                    icon = { Icon(imageVector = Icons.Default.Place, contentDescription = null) },
+                    icon = { Icon(imageVector = Icons.Default.Map, contentDescription = null) },
                     label = { Text("Map") }
                 )
                 NavigationRailItem(
                     selected = selectedTabIndex == 2,
                     onClick = { selectedTabIndex = 2 },
-                    icon = { Icon(imageVector = Icons.Default.Done, contentDescription = null) },
+                    icon = { Icon(imageVector = Icons.Default.Lightbulb, contentDescription = null) },
                     label = { Text("Guess") }
                 )
                 Spacer(Modifier.weight(1f))
@@ -131,19 +133,19 @@ fun RoundPlayPage(
             ) {
                 Tab(selected = selectedTabIndex == 0, onClick = { selectedTabIndex = 0 }) {
                     Spacer(modifier = Modifier.height(4.dp))
-                    Icon(imageVector = Icons.Default.Face, contentDescription = null)
+                    Icon(imageVector = Icons.Default.Image, contentDescription = null)
                     Spacer(modifier = Modifier.height(4.dp))
                     Text("Photo")
                 }
                 Tab(selected = selectedTabIndex == 1, onClick = { selectedTabIndex = 1 }) {
                     Spacer(modifier = Modifier.height(4.dp))
-                    Icon(imageVector = Icons.Default.Place, contentDescription = null)
+                    Icon(imageVector = Icons.Default.Map, contentDescription = null)
                     Spacer(modifier = Modifier.height(4.dp))
                     Text("Map")
                 }
                 Tab(selected = selectedTabIndex == 2, onClick = { selectedTabIndex = 2 }) {
                     Spacer(modifier = Modifier.height(4.dp))
-                    Icon(imageVector = Icons.Default.Done, contentDescription = null)
+                    Icon(imageVector = Icons.Default.Lightbulb, contentDescription = null)
                     Spacer(modifier = Modifier.height(4.dp))
                     Text("Guess")
                 }
