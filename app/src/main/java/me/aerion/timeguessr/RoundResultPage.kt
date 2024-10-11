@@ -5,13 +5,14 @@ import java.text.NumberFormat
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Button
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
@@ -61,7 +62,10 @@ fun RoundResultPage(
         )
     }
 
-    Column(modifier = modifier) {
+    Column(
+        modifier = modifier.fillMaxSize().padding(10.dp),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
         Text(round.Description)
         Text("${round.Year} you were $yearDifference years off")
 
@@ -72,11 +76,11 @@ fun RoundResultPage(
         ZoomableAsyncImage(
             model = round.URL,
             contentDescription = null,
-            modifier = Modifier.fillMaxWidth().height(200.dp)
+            modifier = Modifier.weight(1f)
         )
         Spacer(modifier = Modifier.height(16.dp))
         GoogleMap(
-            modifier = Modifier.fillMaxWidth().height(200.dp),
+            modifier = Modifier.weight(1f),
             cameraPositionState = cameraPositionState
         ) {
             Polyline(
@@ -105,6 +109,10 @@ private class BooleanProvider: PreviewParameterProvider<Boolean> {
 }
 
 @Preview(showBackground = true)
+@Preview(
+    "Landscape", showBackground = true,
+    device = "spec:width=411dp,height=891dp,dpi=420,isRound=false,chinSize=0dp,orientation=landscape"
+)
 @Composable
 fun RoundResultPagePreview(@PreviewParameter(BooleanProvider::class) isLastRound: Boolean) {
     Surface(modifier = Modifier.fillMaxSize()) {
