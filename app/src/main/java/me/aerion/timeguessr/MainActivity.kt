@@ -18,12 +18,14 @@ import androidx.compose.ui.Modifier
 import me.aerion.timeguessr.ui.theme.TimeguessrTheme
 
 // TODO: Restrict api key
-// TODO: Daily number
 // TODO: Logo
-// TODO: Change icons
+// TODO: Change splashscreen
+// TODO: Change icons of tabs
 // TODO: Handle state reset when orientation changes on round result page
 // TODO: Handle round reset when orientation changes on round play page
 // TODO: Display marker result in different color
+// TODO: Add dotted line between markers
+// TODO: Style the round result page (+landscape mode)
 
 enum class Page {
     RoundPlayPage,
@@ -32,7 +34,7 @@ enum class Page {
 }
 
 class MainActivity : ComponentActivity() {
-    private val roundDataSource: RoundDataFetcher = NetworkRoundDataFetcher()
+    private val roundDataSource: RoundDataFetcher = StubbedRoundDataFetcher()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -89,6 +91,7 @@ class MainActivity : ComponentActivity() {
                             round = currentRound,
                             roundResult = roundResults.last(),
                             modifier = Modifier.fillMaxSize(),
+                            isLastRound = currentRoundIndex == rounds.value!!.size - 1,
                             onNextRound = {
                                 if (currentRoundIndex < rounds.value!!.size - 1) {
                                     currentRoundIndex++
