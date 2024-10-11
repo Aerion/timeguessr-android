@@ -18,7 +18,7 @@ import androidx.compose.ui.Modifier
 import me.aerion.timeguessr.ui.theme.TimeguessrTheme
 
 // TODO: Restrict api key
-// TODO: Style the pages and handle landscape: EndGamePage, GuessPage, RoundResultPage, text of RoundPlayPage
+// TODO: Style the pages and handle landscape: EndGamePage, RoundResultPage, text of RoundPlayPage
 // TODO: Add result map with all of the guesses
 
 enum class Page {

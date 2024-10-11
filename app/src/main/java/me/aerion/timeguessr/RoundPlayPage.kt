@@ -8,11 +8,9 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Done
 import androidx.compose.material.icons.filled.Image
 import androidx.compose.material.icons.filled.Lightbulb
 import androidx.compose.material.icons.filled.Map
-import androidx.compose.material.icons.filled.Place
 import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationRail
 import androidx.compose.material3.NavigationRailItem
@@ -44,7 +42,7 @@ fun RoundPlayPage(
 ) {
     var positionGuess by rememberSaveable { mutableStateOf<LatLng?>(null) }
     var selectedTabIndex by rememberSaveable { mutableIntStateOf(0) }
-    var year by rememberSaveable { mutableStateOf("") }
+    var year by rememberSaveable { mutableIntStateOf(0) }
 
     val totalScoreString = NumberFormat.getNumberInstance().format(totalScore)
     val configuration = LocalConfiguration.current
@@ -90,7 +88,7 @@ fun RoundPlayPage(
                         year = year,
                         onYearChange = { year = it },
                         onSubmitGuess = {
-                            onRoundSubmit(Guess(year.toInt(), positionGuess!!))
+                            onRoundSubmit(Guess(year, positionGuess!!))
                         },
                         modifier = modifier
                     )
@@ -116,7 +114,7 @@ fun RoundPlayPage(
                         year = year,
                         onYearChange = { year = it },
                         onSubmitGuess = {
-                            onRoundSubmit(Guess(year.toInt(), positionGuess!!))
+                            onRoundSubmit(Guess(year, positionGuess!!))
                         },
                         modifier = modifier
                     )
