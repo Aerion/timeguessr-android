@@ -22,7 +22,6 @@ import me.aerion.timeguessr.ui.theme.TimeguessrTheme
 // TODO: Change splashscreen
 // TODO: Change icons of tabs
 // TODO: Display marker result in different color
-// TODO: Add dotted line between markers
 // TODO: Style the round result page (+landscape mode)
 
 enum class Page {

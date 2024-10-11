@@ -13,17 +13,21 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.tooling.preview.PreviewParameterProvider
 import androidx.compose.ui.unit.dp
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.model.CameraPosition
+import com.google.android.gms.maps.model.Dash
+import com.google.android.gms.maps.model.Gap
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.LatLngBounds
 import com.google.maps.android.compose.AdvancedMarker
 import com.google.maps.android.compose.GoogleMap
 import com.google.maps.android.compose.MarkerState
+import com.google.maps.android.compose.Polyline
 import com.google.maps.android.compose.rememberCameraPositionState
 import me.saket.telephoto.zoomable.coil.ZoomableAsyncImage
 
@@ -75,6 +79,12 @@ fun RoundResultPage(
             modifier = Modifier.fillMaxWidth().height(200.dp),
             cameraPositionState = cameraPositionState
         ) {
+            Polyline(
+                points = listOf(resultLocation, roundResult.guess.position),
+                width = 4f,
+                pattern = listOf(Dash(20f), Gap(8f)),
+                color = Color.DarkGray
+            )
             AdvancedMarker(state = MarkerState(position = resultLocation))
             AdvancedMarker(state = MarkerState(position = roundResult.guess.position))
         }
