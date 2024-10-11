@@ -1,14 +1,17 @@
 package me.aerion.timeguessr
 
+import android.os.Parcelable
 import com.google.android.gms.maps.model.LatLng
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import kotlinx.parcelize.Parcelize
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import java.io.IOException
 
+@Parcelize
 data class RoundData(
     val No: String,
     val URL: String,
@@ -17,12 +20,13 @@ data class RoundData(
     val Description: String,
     val License: String,
     val Country: String
-)
+) : Parcelable
 
+@Parcelize
 data class Location(
     val lat: Double,
     val lng: Double
-) {
+) : Parcelable {
     fun toLatLng(): LatLng {
         return LatLng(this.lat, this.lng)
     }

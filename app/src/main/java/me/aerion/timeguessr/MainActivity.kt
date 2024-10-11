@@ -12,7 +12,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import me.aerion.timeguessr.ui.theme.TimeguessrTheme
@@ -21,8 +21,6 @@ import me.aerion.timeguessr.ui.theme.TimeguessrTheme
 // TODO: Logo
 // TODO: Change splashscreen
 // TODO: Change icons of tabs
-// TODO: Handle state reset when orientation changes on round result page
-// TODO: Handle round reset when orientation changes on round play page
 // TODO: Display marker result in different color
 // TODO: Add dotted line between markers
 // TODO: Style the round result page (+landscape mode)
@@ -45,10 +43,10 @@ class MainActivity : ComponentActivity() {
                     color = MaterialTheme.colorScheme.background,
                     modifier = Modifier.fillMaxSize()
                 ) {
-                    val rounds = remember { mutableStateOf<List<RoundData>?>(null) }
-                    var currentPage by remember { mutableStateOf(Page.RoundPlayPage) }
-                    var currentRoundIndex by remember { mutableIntStateOf(0) }
-                    var roundResults by remember { mutableStateOf<List<RoundResult>>(emptyList()) }
+                    val rounds = rememberSaveable { mutableStateOf<List<RoundData>?>(null) }
+                    var currentPage by rememberSaveable { mutableStateOf(Page.RoundPlayPage) }
+                    var currentRoundIndex by rememberSaveable { mutableIntStateOf(0) }
+                    var roundResults by rememberSaveable { mutableStateOf<List<RoundResult>>(emptyList()) }
 
                     LaunchedEffect(Unit) {
                         rounds.value = roundDataSource.fetchRounds()
