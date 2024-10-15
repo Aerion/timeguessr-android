@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
@@ -12,6 +13,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Lightbulb
 import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
+import androidx.compose.material3.Slider
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
@@ -23,6 +25,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.google.android.gms.maps.model.LatLng
+import kotlin.math.max
 
 @Composable
 fun GuessPage(
@@ -37,16 +40,17 @@ fun GuessPage(
 
     val minYear = 1900
     val maxYear = java.util.Calendar.getInstance().get(java.util.Calendar.YEAR)
+    val defaultYear = (maxYear - minYear) / 2 + minYear
 
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center,
         modifier = modifier.fillMaxSize()
     ) {
-        Text("Input a year between $minYear and $maxYear")
+        Text("Input your guess for the year")
         Spacer(Modifier.height(20.dp))
         TextField(
-            value = if (year == 0) "" else year.toString(),
+            value = if (year == 0) defaultYear.toString() else year.toString(),
             onValueChange = { newValue ->
                 if (newValue.all { it.isDigit() }) {
                     val newYear = newValue.toInt()
@@ -67,9 +71,17 @@ fun GuessPage(
             )
         )
         Spacer(Modifier.height(20.dp))
+        Slider(
+            value = if (year == 0) defaultYear.toFloat() else year.toFloat(),
+            onValueChange = { onYearChange(it.toInt()) },
+            valueRange = minYear.toFloat()..maxYear.toFloat(),
+            steps = maxYear - minYear,
+            modifier = Modifier.padding(horizontal = 40.dp),
+        )
+        Spacer(Modifier.height(40.dp))
         Button(
             onClick = {
-                onSubmitGuess(Guess(year.toInt(), positionGuess!!))
+                onSubmitGuess(Guess(year, positionGuess!!))
             },
             enabled = isSubmitEnabled,
             modifier = Modifier.height(48.dp)
