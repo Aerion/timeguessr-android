@@ -33,7 +33,7 @@ fun EndGamePage(
     val maxScoreString = NumberFormat.getNumberInstance().format(roundResults.size * 10000)
 
     val scoreBuilder = StringBuilder()
-    scoreBuilder.appendLine("Timeguessr #$dailyNumber")
+    scoreBuilder.appendLine("Timeguessr #$dailyNumber $totalScoreString/$maxScoreString")
     for (roundResult in roundResults) {
         scoreBuilder.append(getGeoScoreString(roundResult.distanceScore))
         scoreBuilder.append(getTimeScoreString(roundResult.yearScore))
@@ -77,7 +77,10 @@ fun EndGamePage(
 }
 
 @Preview(showBackground = true)
-@Preview("French", locale = "fr-FR", showBackground = true)
+@Preview(
+    "Landscape", showBackground = true,
+    device = "spec:width=411dp,height=891dp,dpi=420,isRound=false,chinSize=0dp,orientation=landscape"
+)
 @Composable
 fun EndGamePagePreview() {
     EndGamePage(
