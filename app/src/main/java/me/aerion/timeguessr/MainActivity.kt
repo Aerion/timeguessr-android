@@ -4,7 +4,10 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.navigationBarsPadding
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -20,6 +23,9 @@ import me.aerion.timeguessr.ui.theme.TimeguessrTheme
 // TODO: Restrict api key
 // TODO: Style the pages and handle landscape: EndGamePage, RoundResultPage, text of RoundPlayPage
 // TODO: Add result map with all of the guesses
+// TODO: Store daily number and results locally and add a refresh button to check if there is a new daily
+// TODO: Set the guess and result markers with different colors
+// TODO: Display the distance difference
 
 enum class Page {
     RoundPlayPage,
@@ -28,7 +34,7 @@ enum class Page {
 }
 
 class MainActivity : ComponentActivity() {
-    private val roundDataSource: RoundDataFetcher = StubbedRoundDataFetcher()
+    private val roundDataSource: RoundDataFetcher = NetworkRoundDataFetcher()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -38,6 +44,8 @@ class MainActivity : ComponentActivity() {
                 Surface(
                     color = MaterialTheme.colorScheme.background,
                     modifier = Modifier.fillMaxSize()
+                        .background(MaterialTheme.colorScheme.background)
+                        .statusBarsPadding().navigationBarsPadding()
                 ) {
                     val rounds = rememberSaveable { mutableStateOf<List<RoundData>?>(null) }
                     var currentPage by rememberSaveable { mutableStateOf(Page.RoundPlayPage) }
