@@ -25,7 +25,6 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.google.android.gms.maps.model.LatLng
-import kotlin.math.max
 
 @Composable
 fun GuessPage(
@@ -44,8 +43,8 @@ fun GuessPage(
 
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center,
-        modifier = modifier.fillMaxSize()
+        verticalArrangement = Arrangement.Bottom,
+        modifier = modifier.fillMaxSize().padding(bottom = 40.dp)
     ) {
         Text("Input your guess for the year")
         Spacer(Modifier.height(20.dp))
