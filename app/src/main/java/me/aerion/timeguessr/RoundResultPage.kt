@@ -25,6 +25,7 @@ import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.LatLngBounds
 import com.google.maps.android.compose.AdvancedMarker
 import com.google.maps.android.compose.GoogleMap
+import com.google.maps.android.compose.MapUiSettings
 import com.google.maps.android.compose.Polyline
 import com.google.maps.android.compose.rememberCameraPositionState
 import com.google.maps.android.compose.rememberMarkerState
@@ -82,7 +83,12 @@ fun RoundResultPage(
         Spacer(modifier = Modifier.height(16.dp))
         GoogleMap(
             modifier = Modifier.weight(1f),
-            cameraPositionState = cameraPositionState
+            cameraPositionState = cameraPositionState,
+            uiSettings = MapUiSettings(
+                indoorLevelPickerEnabled = false,
+                myLocationButtonEnabled = false,
+                mapToolbarEnabled = false
+            ),
         ) {
             Polyline(
                 points = listOf(resultLocation, roundResult.guess.position),
