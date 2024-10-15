@@ -49,28 +49,6 @@ fun RoundPlayPage(
 
     if (configuration.orientation == Configuration.ORIENTATION_LANDSCAPE) {
         Row(modifier.fillMaxSize()) {
-            NavigationRail {
-                Spacer(Modifier.weight(1f))
-                NavigationRailItem(
-                    selected = selectedTabIndex == 0,
-                    onClick = { selectedTabIndex = 0 },
-                    icon = { Icon(imageVector = Icons.Default.Image, contentDescription = null) },
-                    label = { Text("Photo") }
-                )
-                NavigationRailItem(
-                    selected = selectedTabIndex == 1,
-                    onClick = { selectedTabIndex = 1 },
-                    icon = { Icon(imageVector = Icons.Default.Map, contentDescription = null) },
-                    label = { Text("Map") }
-                )
-                NavigationRailItem(
-                    selected = selectedTabIndex == 2,
-                    onClick = { selectedTabIndex = 2 },
-                    icon = { Icon(imageVector = Icons.Default.Lightbulb, contentDescription = null) },
-                    label = { Text("Guess") }
-                )
-                Spacer(Modifier.weight(1f))
-            }
             Column(modifier = Modifier.weight(1f)) {
                 Text (
                     text = "Score: $totalScoreString | Round: ${currentRoundIndex + 1}/5",
@@ -93,6 +71,28 @@ fun RoundPlayPage(
                         modifier = modifier
                     )
                 }
+            }
+            NavigationRail {
+                Spacer(Modifier.weight(1f))
+                NavigationRailItem(
+                    selected = selectedTabIndex == 0,
+                    onClick = { selectedTabIndex = 0 },
+                    icon = { Icon(imageVector = Icons.Default.Image, contentDescription = null) },
+                    label = { Text("Photo") }
+                )
+                NavigationRailItem(
+                    selected = selectedTabIndex == 1,
+                    onClick = { selectedTabIndex = 1 },
+                    icon = { Icon(imageVector = Icons.Default.Map, contentDescription = null) },
+                    label = { Text("Map") }
+                )
+                NavigationRailItem(
+                    selected = selectedTabIndex == 2,
+                    onClick = { selectedTabIndex = 2 },
+                    icon = { Icon(imageVector = Icons.Default.Lightbulb, contentDescription = null) },
+                    label = { Text("Guess") }
+                )
+                Spacer(Modifier.weight(1f))
             }
         }
     } else {
