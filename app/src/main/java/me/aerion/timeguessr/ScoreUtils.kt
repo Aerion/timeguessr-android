@@ -20,6 +20,22 @@ fun computeYearScore(year1: Number, year2: Number): Int {
 }
 
 fun computeDistanceScore(
+    distanceInMeters: Int
+): Int {
+    return when {
+        distanceInMeters <= 50 -> 5000
+        distanceInMeters <= 1000 -> 5000 - (distanceInMeters * 0.02).toInt()
+        distanceInMeters <= 5000 -> 4980 - (distanceInMeters * 0.016).toInt()
+        distanceInMeters <= 100000 -> 4900 - (distanceInMeters * 0.004).toInt()
+        distanceInMeters <= 1000000 -> 4500 - (distanceInMeters * 0.001).toInt()
+        distanceInMeters <= 2000000 -> 3500 - (distanceInMeters * 0.0005).toInt()
+        distanceInMeters <= 3000000 -> 2500 - (distanceInMeters * 0.00033333).toInt()
+        distanceInMeters <= 6000000 -> 1500 - (distanceInMeters * 0.0002).toInt()
+        else -> 12
+    }
+}
+
+fun computeDistanceInMeters(
     latitude1: Double,
     longitude1: Double,
     latitude2: Double,
@@ -34,19 +50,7 @@ fun computeDistanceScore(
         distance
     )
 
-    val distanceInMeters = distance[0]
-
-    return when {
-        distanceInMeters <= 50 -> 5000
-        distanceInMeters <= 1000 -> 5000 - (distanceInMeters * 0.02).toInt()
-        distanceInMeters <= 5000 -> 4980 - (distanceInMeters * 0.016).toInt()
-        distanceInMeters <= 100000 -> 4900 - (distanceInMeters * 0.004).toInt()
-        distanceInMeters <= 1000000 -> 4500 - (distanceInMeters * 0.001).toInt()
-        distanceInMeters <= 2000000 -> 3500 - (distanceInMeters * 0.0005).toInt()
-        distanceInMeters <= 3000000 -> 2500 - (distanceInMeters * 0.00033333).toInt()
-        distanceInMeters <= 6000000 -> 1500 - (distanceInMeters * 0.0002).toInt()
-        else -> 12
-    }
+    return distance[0].toInt()
 }
 
 fun getGeoScoreString(score: Int): String {

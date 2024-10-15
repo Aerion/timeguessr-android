@@ -70,18 +70,20 @@ class MainActivity : ComponentActivity() {
                             currentRoundIndex = currentRoundIndex,
                             totalScore = totalScore,
                             onRoundSubmit = { guess ->
+                                val distanceInMeters = computeDistanceInMeters(
+                                    guess.position.latitude,
+                                    guess.position.longitude,
+                                    currentRound.Location.lat,
+                                    currentRound.Location.lng
+                                )
                                 roundResults = roundResults + RoundResult(
                                     yearScore = computeYearScore(
                                         guess.year,
                                         currentRound.Year.toInt()
                                     ),
-                                    distanceScore = computeDistanceScore(
-                                        guess.position.latitude,
-                                        guess.position.longitude,
-                                        currentRound.Location.lat,
-                                        currentRound.Location.lng
-                                    ),
+                                    distanceScore = computeDistanceScore(distanceInMeters),
                                     guess = guess,
+                                    distanceDiffInMeters = distanceInMeters
                                 )
                                 currentPage = Page.RoundResultPage
                             },

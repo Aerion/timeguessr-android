@@ -9,7 +9,7 @@ import kotlinx.parcelize.Parcelize
 data class Guess(val year: Number, val position: LatLng) : Parcelable
 
 @Parcelize
-data class RoundResult(val yearScore: Int, val distanceScore: Int, val guess : Guess) : Parcelable {
+data class RoundResult(val yearScore: Int, val distanceScore: Int, val distanceDiffInMeters: Int, val guess : Guess) : Parcelable {
     @IgnoredOnParcel
     val totalScore = yearScore + distanceScore
 }

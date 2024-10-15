@@ -88,6 +88,7 @@ fun EndGamePagePreview() {
             RoundResult(
                 yearScore = 5000,
                 distanceScore = 1000,
+                distanceDiffInMeters = 1242,
                 guess = Guess(
                     year = 2000,
                     position = LatLng(0.0, 0.0)
@@ -96,6 +97,7 @@ fun EndGamePagePreview() {
             RoundResult(
                 yearScore = 4000,
                 distanceScore = 2100,
+                distanceDiffInMeters = 11,
                 guess = Guess(
                     year = 2000,
                     position = LatLng(0.0, 0.0)
@@ -104,6 +106,7 @@ fun EndGamePagePreview() {
             RoundResult(
                 yearScore = 3000,
                 distanceScore = 3200,
+                distanceDiffInMeters = 12381293,
                 guess = Guess(
                     year = 2000,
                     position = LatLng(0.0, 0.0)
@@ -112,6 +115,7 @@ fun EndGamePagePreview() {
             RoundResult(
                 yearScore = 2000,
                 distanceScore = 4300,
+                distanceDiffInMeters = 12321,
                 guess = Guess(
                     year = 2000,
                     position = LatLng(0.0, 0.0)
@@ -120,6 +124,7 @@ fun EndGamePagePreview() {
             RoundResult(
                 yearScore = 5000,
                 distanceScore = 12,
+                distanceDiffInMeters = 0,
                 guess = Guess(
                     year = 2000,
                     position = LatLng(0.0, 0.0)

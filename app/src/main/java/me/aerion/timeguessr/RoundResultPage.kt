@@ -1,11 +1,12 @@
 package me.aerion.timeguessr
 
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Button
+import androidx.compose.material3.Card
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -13,6 +14,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.tooling.preview.PreviewParameterProvider
@@ -46,6 +48,12 @@ fun RoundResultPage(
     val yearDifference = kotlin.math.abs(roundResult.guess.year.toInt() - round.Year.toInt())
     val resultLocation = round.Location.toLatLng()
 
+    val distanceDiffWithUnitString = if (roundResult.distanceDiffInMeters < 1000) {
+        "${roundResult.distanceDiffInMeters} meters"
+    } else {
+        "${roundResult.distanceDiffInMeters / 1000} km"
+    }
+
     val cameraPositionState = rememberCameraPositionState {
         position = CameraPosition.fromLatLngZoom(resultLocation, 1f)
     }
@@ -53,7 +61,7 @@ fun RoundResultPage(
     val markerStateResult = rememberMarkerState(position = resultLocation)
     val markerStateGuess = rememberMarkerState(position = roundResult.guess.position)
 
-    LaunchedEffect(key1 = true ){
+    LaunchedEffect(key1 = true) {
         val boundsBuilder = LatLngBounds.builder()
         boundsBuilder.include(resultLocation)
         boundsBuilder.include(roundResult.guess.position)
@@ -66,39 +74,55 @@ fun RoundResultPage(
 
     Column(
         modifier = modifier.fillMaxSize().padding(10.dp),
-        horizontalAlignment = Alignment.CenterHorizontally
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.SpaceBetween
     ) {
-        Text(round.Description)
-        Text("${round.Year} you were $yearDifference years off")
-
-        Text("Year Score: $yearScoreString/5000")
-        Text("Distance Score: $distanceScoreString/5000")
-        Text("Total Score: $totalScoreString/10000")
-        Spacer(modifier = Modifier.height(16.dp))
-        ZoomableAsyncImage(
-            model = round.URL,
-            contentDescription = null,
-            modifier = Modifier.weight(1f)
-        )
-        Spacer(modifier = Modifier.height(16.dp))
-        GoogleMap(
-            modifier = Modifier.weight(1f),
-            cameraPositionState = cameraPositionState,
-            uiSettings = MapUiSettings(
-                indoorLevelPickerEnabled = false,
-                myLocationButtonEnabled = false,
-                mapToolbarEnabled = false
-            ),
+        Card(
+            modifier = Modifier.weight(1f).fillMaxWidth().padding(4.dp),
         ) {
-            Polyline(
-                points = listOf(resultLocation, roundResult.guess.position),
-                width = 4f,
-                pattern = listOf(Dash(20f), Gap(8f)),
-                color = Color.DarkGray
+            Text(text = round.Description, fontStyle = FontStyle.Italic)
+            ZoomableAsyncImage(
+                model = round.URL,
+                contentDescription = null,
+                modifier = Modifier.weight(1f)
             )
-            AdvancedMarker(state = markerStateResult, title="Actual location")
-            AdvancedMarker(state = markerStateGuess, alpha = .5f,
-                title="Your guess")
+            Text("${round.Year} you were $yearDifference years off")
+        }
+
+        Card(
+            modifier = Modifier.weight(1f).fillMaxWidth().padding(4.dp)
+        ) {
+            GoogleMap(
+                modifier = Modifier.weight(1f),
+                cameraPositionState = cameraPositionState,
+                uiSettings = MapUiSettings(
+                    indoorLevelPickerEnabled = false,
+                    myLocationButtonEnabled = false,
+                    mapToolbarEnabled = false
+                ),
+            ) {
+                Polyline(
+                    points = listOf(resultLocation, roundResult.guess.position),
+                    width = 4f,
+                    pattern = listOf(Dash(20f), Gap(8f)),
+                    color = Color.DarkGray
+                )
+                AdvancedMarker(state = markerStateResult, title = "Actual location")
+                AdvancedMarker(
+                    state = markerStateGuess, alpha = .5f,
+                    title = "Your guess"
+                )
+            }
+
+            Text("You were $distanceDiffWithUnitString away")
+        }
+
+        Card(
+            modifier = Modifier.fillMaxWidth().padding(4.dp)
+        ) {
+            Text("Year Score: $yearScoreString/5000")
+            Text("Distance Score: $distanceScoreString/5000")
+            Text("Total Score: $totalScoreString/10000")
         }
 
         Button(
@@ -137,6 +161,7 @@ fun RoundResultPagePreview(@PreviewParameter(BooleanProvider::class) isLastRound
             roundResult = RoundResult(
                 yearScore = 1234,
                 distanceScore = 5678,
+                distanceDiffInMeters = 132,
                 guess = Guess(2020, LatLng(51.48633971492552, 3.691691980292835))
             ),
             isLastRound = isLastRound,
