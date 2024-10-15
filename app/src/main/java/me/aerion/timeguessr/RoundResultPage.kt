@@ -1,7 +1,5 @@
 package me.aerion.timeguessr
 
-import android.annotation.SuppressLint
-import java.text.NumberFormat
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -27,12 +25,12 @@ import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.LatLngBounds
 import com.google.maps.android.compose.AdvancedMarker
 import com.google.maps.android.compose.GoogleMap
-import com.google.maps.android.compose.MarkerState
 import com.google.maps.android.compose.Polyline
 import com.google.maps.android.compose.rememberCameraPositionState
+import com.google.maps.android.compose.rememberMarkerState
 import me.saket.telephoto.zoomable.coil.ZoomableAsyncImage
+import java.text.NumberFormat
 
-@SuppressLint("UnrememberedMutableState")
 @Composable
 fun RoundResultPage(
     round : RoundData,
@@ -50,6 +48,9 @@ fun RoundResultPage(
     val cameraPositionState = rememberCameraPositionState {
         position = CameraPosition.fromLatLngZoom(resultLocation, 1f)
     }
+
+    val markerStateResult = rememberMarkerState(position = resultLocation)
+    val markerStateGuess = rememberMarkerState(position = roundResult.guess.position)
 
     LaunchedEffect(key1 = true ){
         val boundsBuilder = LatLngBounds.builder()
@@ -89,8 +90,9 @@ fun RoundResultPage(
                 pattern = listOf(Dash(20f), Gap(8f)),
                 color = Color.DarkGray
             )
-            AdvancedMarker(state = MarkerState(position = resultLocation))
-            AdvancedMarker(state = MarkerState(position = roundResult.guess.position))
+            AdvancedMarker(state = markerStateResult, title="Actual location")
+            AdvancedMarker(state = markerStateGuess, alpha = .5f,
+                title="Your guess")
         }
 
         Button(

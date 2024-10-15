@@ -24,7 +24,6 @@ import me.aerion.timeguessr.ui.theme.TimeguessrTheme
 // TODO: Style the pages and handle landscape: EndGamePage, RoundResultPage, text of RoundPlayPage
 // TODO: Add result map with all of the guesses
 // TODO: Store daily number and results locally and add a refresh button to check if there is a new daily
-// TODO: Set the guess and result markers with different colors
 // TODO: Display the distance difference
 
 enum class Page {
