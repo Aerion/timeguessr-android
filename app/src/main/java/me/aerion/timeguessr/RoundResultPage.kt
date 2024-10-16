@@ -1,20 +1,32 @@
 package me.aerion.timeguessr
 
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontStyle
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.tooling.preview.PreviewParameterProvider
@@ -27,6 +39,7 @@ import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.LatLngBounds
 import com.google.maps.android.compose.AdvancedMarker
 import com.google.maps.android.compose.GoogleMap
+import com.google.maps.android.compose.MapProperties
 import com.google.maps.android.compose.MapUiSettings
 import com.google.maps.android.compose.Polyline
 import com.google.maps.android.compose.rememberCameraPositionState
@@ -45,6 +58,8 @@ fun RoundResultPage(
     val totalScoreString = NumberFormat.getInstance().format(roundResult.totalScore)
     val yearScoreString = NumberFormat.getInstance().format(roundResult.yearScore)
     val distanceScoreString = NumberFormat.getInstance().format(roundResult.distanceScore)
+    val maxScoreString = NumberFormat.getInstance().format(10000)
+    val subMaxScoreString = NumberFormat.getInstance().format(5000)
     val yearDifference = kotlin.math.abs(roundResult.guess.year.toInt() - round.Year.toInt())
     val resultLocation = round.Location.toLatLng()
 
@@ -56,6 +71,12 @@ fun RoundResultPage(
 
     val cameraPositionState = rememberCameraPositionState {
         position = CameraPosition.fromLatLngZoom(resultLocation, 1f)
+    }
+
+    val mapProperties by remember{
+        mutableStateOf(MapProperties(
+minZoomPreference = 1f,
+        ))
     }
 
     val markerStateResult = rememberMarkerState(position = resultLocation)
@@ -75,54 +96,154 @@ fun RoundResultPage(
     Column(
         modifier = modifier.fillMaxSize().padding(10.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.SpaceBetween
+        verticalArrangement = Arrangement.spacedBy(10.dp)
     ) {
         Card(
-            modifier = Modifier.weight(1f).fillMaxWidth().padding(4.dp),
+            modifier = Modifier.weight(1f).fillMaxWidth(),
         ) {
-            Text(text = round.Description, fontStyle = FontStyle.Italic)
-            ZoomableAsyncImage(
-                model = round.URL,
-                contentDescription = null,
-                modifier = Modifier.weight(1f)
-            )
-            Text("${round.Year} you were $yearDifference years off")
-        }
-
-        Card(
-            modifier = Modifier.weight(1f).fillMaxWidth().padding(4.dp)
-        ) {
-            GoogleMap(
-                modifier = Modifier.weight(1f),
-                cameraPositionState = cameraPositionState,
-                uiSettings = MapUiSettings(
-                    indoorLevelPickerEnabled = false,
-                    myLocationButtonEnabled = false,
-                    mapToolbarEnabled = false
-                ),
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally,
+                modifier = Modifier.padding(10.dp).fillMaxWidth()
             ) {
-                Polyline(
-                    points = listOf(resultLocation, roundResult.guess.position),
-                    width = 4f,
-                    pattern = listOf(Dash(20f), Gap(8f)),
-                    color = Color.DarkGray
+                Text(text = round.Description, fontStyle = FontStyle.Italic)
+                ZoomableAsyncImage(
+                    model = round.URL,
+                    contentDescription = null,
+                    modifier = Modifier.weight(1f).padding(vertical = 4.dp)
                 )
-                AdvancedMarker(state = markerStateResult, title = "Actual location")
-                AdvancedMarker(
-                    state = markerStateGuess, alpha = .5f,
-                    title = "Your guess"
+                Text(
+                    buildAnnotatedString {
+                        withStyle(
+                            style = SpanStyle(
+                                color = MaterialTheme.colorScheme.primary,
+                                fontWeight = FontWeight.Bold
+                            )
+                        ) {
+                            append(round.Year)
+                        }
+                    }
+                )
+                Text(
+                    buildAnnotatedString {
+                        append("You were ")
+                        withStyle(
+                            style = SpanStyle(
+                                color = MaterialTheme.colorScheme.primary,
+                                fontWeight = FontWeight.Bold
+                            )
+                        ) {
+                            append(yearDifference.toString())
+                        }
+                        append(" year")
+                        if (yearDifference != 1) {
+                            append("s")
+                        }
+                        append(" off")
+                    }
+                )
+                Spacer(modifier = Modifier.height(4.dp))
+                Text(
+                    buildAnnotatedString {
+                        append("\uD83D\uDCC5 ")
+                        withStyle(
+                            style = SpanStyle(
+                                color = MaterialTheme.colorScheme.primary,
+                                fontWeight = FontWeight.Bold
+                            )
+                        ) {
+                            append(yearScoreString)
+                        }
+                        append(" / $subMaxScoreString")
+                    }
                 )
             }
-
-            Text("You were $distanceDiffWithUnitString away")
         }
 
         Card(
-            modifier = Modifier.fillMaxWidth().padding(4.dp)
+            modifier = Modifier.weight(1f).fillMaxWidth(),
         ) {
-            Text("Year Score: $yearScoreString/5000")
-            Text("Distance Score: $distanceScoreString/5000")
-            Text("Total Score: $totalScoreString/10000")
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally,
+                modifier = Modifier.padding(10.dp).fillMaxWidth()
+            ) {
+                GoogleMap(
+                    modifier = Modifier.weight(1f),
+                    cameraPositionState = cameraPositionState,
+                    uiSettings = MapUiSettings(
+                        indoorLevelPickerEnabled = false,
+                        myLocationButtonEnabled = false,
+                        mapToolbarEnabled = false,
+                    ),
+                    properties = mapProperties
+                ) {
+                    Polyline(
+                        points = listOf(resultLocation, roundResult.guess.position),
+                        width = 4f,
+                        pattern = listOf(Dash(20f), Gap(8f)),
+                        color = Color.DarkGray
+                    )
+                    AdvancedMarker(state = markerStateResult, title = "Actual location")
+                    AdvancedMarker(
+                        state = markerStateGuess, alpha = .5f,
+                        title = "Your guess"
+                    )
+                }
+
+                Text(
+                    buildAnnotatedString {
+                        append("You were ")
+                        withStyle(
+                            style = SpanStyle(
+                                color = MaterialTheme.colorScheme.primary,
+                                fontWeight = FontWeight.Bold
+                            )
+                        ) {
+                            append(distanceDiffWithUnitString)
+                        }
+                        append(" away")
+                    }
+                )
+
+                Spacer(modifier = Modifier.height(4.dp))
+                Text(
+                    buildAnnotatedString {
+                        append("\uD83C\uDF0E ")
+                        withStyle(
+                            style = SpanStyle(
+                                color = MaterialTheme.colorScheme.primary,
+                                fontWeight = FontWeight.Bold
+                            )
+                        ) {
+                            append(distanceScoreString)
+                        }
+                        append(" / $subMaxScoreString")
+                    }
+                )
+            }
+        }
+
+        Card(
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally,
+                modifier = Modifier.padding(10.dp).fillMaxWidth()
+            ) {
+                Text(
+                    buildAnnotatedString {
+                        append("Round Score: ")
+                        withStyle(
+                            style = SpanStyle(
+                                color = MaterialTheme.colorScheme.primary,
+                                fontWeight = FontWeight.Bold
+                            )
+                        ) {
+                            append(totalScoreString)
+                        }
+                        append(" / $maxScoreString")
+                    }
+                )
+            }
         }
 
         Button(
@@ -159,8 +280,8 @@ fun RoundResultPagePreview(@PreviewParameter(BooleanProvider::class) isLastRound
                 License = "License"
             ),
             roundResult = RoundResult(
-                yearScore = 1234,
-                distanceScore = 5678,
+                yearScore = 123,
+                distanceScore = 5000,
                 distanceDiffInMeters = 132,
                 guess = Guess(2020, LatLng(51.48633971492552, 3.691691980292835))
             ),

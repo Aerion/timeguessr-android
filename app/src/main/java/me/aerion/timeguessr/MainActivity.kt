@@ -24,7 +24,6 @@ import me.aerion.timeguessr.ui.theme.TimeguessrTheme
 // TODO: Style the pages and handle landscape: EndGamePage, RoundResultPage, text of RoundPlayPage
 // TODO: Add result map with all of the guesses
 // TODO: Store daily number and results locally and add a refresh button to check if there is a new daily
-// TODO: Display the distance difference
 
 enum class Page {
     RoundPlayPage,
@@ -33,7 +32,7 @@ enum class Page {
 }
 
 class MainActivity : ComponentActivity() {
-    private val roundDataSource: RoundDataFetcher = NetworkRoundDataFetcher()
+    private val roundDataSource: RoundDataFetcher = /*NetworkRoundDataFetcher()*/ StubbedRoundDataFetcher()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
