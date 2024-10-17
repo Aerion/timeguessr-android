@@ -29,7 +29,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.LatLng
+import com.google.maps.android.compose.rememberCameraPositionState
 import java.text.NumberFormat
 
 @Composable
@@ -43,6 +45,10 @@ fun RoundPlayPage(
     var positionGuess by rememberSaveable { mutableStateOf<LatLng?>(null) }
     var selectedTabIndex by rememberSaveable { mutableIntStateOf(0) }
     var year by rememberSaveable { mutableIntStateOf(0) }
+
+    val cameraPositionState = rememberCameraPositionState {
+        position = CameraPosition.fromLatLngZoom(positionGuess ?: LatLng(51.48633971492552, 3.691691980292835), 4f)
+    }
 
     val totalScoreString = NumberFormat.getNumberInstance().format(totalScore)
     val configuration = LocalConfiguration.current
@@ -59,6 +65,7 @@ fun RoundPlayPage(
                     1 -> MapPage(
                         onPositionGuessChange = { positionGuess = it },
                         positionGuess = positionGuess,
+                        cameraPositionState = cameraPositionState,
                         modifier = modifier
                     )
                     2 -> GuessPage(
@@ -107,6 +114,7 @@ fun RoundPlayPage(
                     1 -> MapPage(
                         onPositionGuessChange = { positionGuess = it },
                         positionGuess = positionGuess,
+                        cameraPositionState = cameraPositionState,
                         modifier = modifier
                     )
                     2 -> GuessPage(
