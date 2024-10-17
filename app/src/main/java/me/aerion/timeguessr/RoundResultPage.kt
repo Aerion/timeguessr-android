@@ -49,8 +49,8 @@ import java.text.NumberFormat
 
 @Composable
 fun RoundResultPage(
-    round : RoundData,
-    roundResult : RoundResult,
+    round: RoundData,
+    roundResult: RoundResult,
     isLastRound: Boolean,
     onNextRound: () -> Unit,
     modifier: Modifier = Modifier
@@ -69,6 +69,118 @@ fun RoundResultPage(
         "${roundResult.distanceDiffInMeters / 1000} km"
     }
 
+    Column(
+        modifier = modifier.padding(10.dp),
+        verticalArrangement = Arrangement.spacedBy(10.dp)
+    ) {
+        Row(
+            modifier = Modifier.weight(1f).fillMaxSize(),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(10.dp)
+        ) {
+            RoundDescriptionCard(
+                round = round,
+                yearDifference = yearDifference,
+                yearScoreString = yearScoreString,
+                subMaxScoreString = subMaxScoreString,
+                modifier = Modifier.weight(1f)
+            )
+
+            MapDistanceCard(
+                resultLocation = resultLocation,
+                roundResult = roundResult,
+                distanceDiffWithUnitString = distanceDiffWithUnitString,
+                distanceScoreString = distanceScoreString,
+                subMaxScoreString = subMaxScoreString,
+                modifier = Modifier.weight(1f)
+            )
+        }
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.spacedBy(10.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            RoundScoreCard(
+                totalScoreString = totalScoreString,
+                maxScoreString = maxScoreString,
+                modifier = Modifier.weight(1f)
+            )
+
+            Button(
+                onClick = onNextRound
+            ) {
+                Text(if (isLastRound) "Show results" else "Next Round")
+            }
+        }
+    }
+}
+
+@Composable
+fun RoundDescriptionCard(round: RoundData, yearDifference: Int, yearScoreString: String, subMaxScoreString: String, modifier: Modifier = Modifier) {
+    Card(
+        modifier = modifier
+    ) {
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
+            modifier = Modifier.padding(10.dp).fillMaxWidth()
+        ) {
+            Text(text = round.Description, fontStyle = FontStyle.Italic)
+            ZoomableAsyncImage(
+                model = round.URL,
+                contentDescription = null,
+                modifier = Modifier.weight(1f).padding(vertical = 4.dp)
+            )
+            Text(
+                buildAnnotatedString {
+                    withStyle(
+                        style = SpanStyle(
+                            color = MaterialTheme.colorScheme.primary,
+                            fontWeight = FontWeight.Bold
+                        )
+                    ) {
+                        append(round.Year)
+                    }
+                }
+            )
+            Text(
+                buildAnnotatedString {
+                    append("You were ")
+                    withStyle(
+                        style = SpanStyle(
+                            color = MaterialTheme.colorScheme.primary,
+                            fontWeight = FontWeight.Bold
+                        )
+                    ) {
+                        append(yearDifference.toString())
+                    }
+                    append(" year")
+                    if (yearDifference != 1) {
+                        append("s")
+                    }
+                    append(" off")
+                }
+            )
+            Spacer(modifier = Modifier.height(4.dp))
+            Text(
+                buildAnnotatedString {
+                    append("\uD83D\uDCC5 ")
+                    withStyle(
+                        style = SpanStyle(
+                            color = MaterialTheme.colorScheme.primary,
+                            fontWeight = FontWeight.Bold
+                        )
+                    ) {
+                        append(yearScoreString)
+                    }
+                    append(" / $subMaxScoreString")
+                }
+            )
+        }
+    }
+}
+
+@Composable
+fun MapDistanceCard(resultLocation: LatLng, roundResult: RoundResult, distanceDiffWithUnitString: String, distanceScoreString: String, subMaxScoreString: String, modifier: Modifier = Modifier) {
     val cameraPositionState = rememberCameraPositionState {
         position = CameraPosition.fromLatLngZoom(resultLocation, 1f)
     }
@@ -95,173 +207,93 @@ fun RoundResultPage(
         )
     }
 
-    Column(
-        modifier = modifier.padding(10.dp),
-        verticalArrangement = Arrangement.spacedBy(10.dp)
+    Card(
+        modifier = modifier
     ) {
-        Row(
-            modifier = Modifier.weight(1f).fillMaxSize(),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(10.dp)
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
+            modifier = Modifier.padding(10.dp).fillMaxWidth()
         ) {
-            Card(
-                modifier = Modifier.weight(1f)
+            GoogleMap(
+                modifier = Modifier.weight(1f),
+                cameraPositionState = cameraPositionState,
+                uiSettings = MapUiSettings(
+                    indoorLevelPickerEnabled = false,
+                    myLocationButtonEnabled = false,
+                    mapToolbarEnabled = false,
+                ),
+                properties = mapProperties
             ) {
-                Column(
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    modifier = Modifier.padding(10.dp).fillMaxWidth()
-                ) {
-                    Text(text = round.Description, fontStyle = FontStyle.Italic)
-                    ZoomableAsyncImage(
-                        model = round.URL,
-                        contentDescription = null,
-                        modifier = Modifier.weight(1f).padding(vertical = 4.dp)
-                    )
-                    Text(
-                        buildAnnotatedString {
-                            withStyle(
-                                style = SpanStyle(
-                                    color = MaterialTheme.colorScheme.primary,
-                                    fontWeight = FontWeight.Bold
-                                )
-                            ) {
-                                append(round.Year)
-                            }
-                        }
-                    )
-                    Text(
-                        buildAnnotatedString {
-                            append("You were ")
-                            withStyle(
-                                style = SpanStyle(
-                                    color = MaterialTheme.colorScheme.primary,
-                                    fontWeight = FontWeight.Bold
-                                )
-                            ) {
-                                append(yearDifference.toString())
-                            }
-                            append(" year")
-                            if (yearDifference != 1) {
-                                append("s")
-                            }
-                            append(" off")
-                        }
-                    )
-                    Spacer(modifier = Modifier.height(4.dp))
-                    Text(
-                        buildAnnotatedString {
-                            append("\uD83D\uDCC5 ")
-                            withStyle(
-                                style = SpanStyle(
-                                    color = MaterialTheme.colorScheme.primary,
-                                    fontWeight = FontWeight.Bold
-                                )
-                            ) {
-                                append(yearScoreString)
-                            }
-                            append(" / $subMaxScoreString")
-                        }
-                    )
-                }
+                Polyline(
+                    points = listOf(resultLocation, roundResult.guess.position),
+                    width = 4f,
+                    pattern = listOf(Dash(20f), Gap(8f)),
+                    color = Color.DarkGray
+                )
+                AdvancedMarker(state = markerStateResult, title = "Actual location")
+                AdvancedMarker(
+                    state = markerStateGuess, alpha = .5f,
+                    title = "Your guess"
+                )
             }
 
-            Card(
-                modifier = Modifier.weight(1f)
-            ) {
-                Column(
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    modifier = Modifier.padding(10.dp).fillMaxWidth()
-                ) {
-                    GoogleMap(
-                        modifier = Modifier.weight(1f),
-                        cameraPositionState = cameraPositionState,
-                        uiSettings = MapUiSettings(
-                            indoorLevelPickerEnabled = false,
-                            myLocationButtonEnabled = false,
-                            mapToolbarEnabled = false,
-                        ),
-                        properties = mapProperties
+            Text(
+                buildAnnotatedString {
+                    append("You were ")
+                    withStyle(
+                        style = SpanStyle(
+                            color = MaterialTheme.colorScheme.primary,
+                            fontWeight = FontWeight.Bold
+                        )
                     ) {
-                        Polyline(
-                            points = listOf(resultLocation, roundResult.guess.position),
-                            width = 4f,
-                            pattern = listOf(Dash(20f), Gap(8f)),
-                            color = Color.DarkGray
-                        )
-                        AdvancedMarker(state = markerStateResult, title = "Actual location")
-                        AdvancedMarker(
-                            state = markerStateGuess, alpha = .5f,
-                            title = "Your guess"
-                        )
+                        append(distanceDiffWithUnitString)
                     }
-
-                    Text(
-                        buildAnnotatedString {
-                            append("You were ")
-                            withStyle(
-                                style = SpanStyle(
-                                    color = MaterialTheme.colorScheme.primary,
-                                    fontWeight = FontWeight.Bold
-                                )
-                            ) {
-                                append(distanceDiffWithUnitString)
-                            }
-                            append(" away")
-                        }
-                    )
-
-                    Spacer(modifier = Modifier.height(4.dp))
-                    Text(
-                        buildAnnotatedString {
-                            append("\uD83C\uDF0E ")
-                            withStyle(
-                                style = SpanStyle(
-                                    color = MaterialTheme.colorScheme.primary,
-                                    fontWeight = FontWeight.Bold
-                                )
-                            ) {
-                                append(distanceScoreString)
-                            }
-                            append(" / $subMaxScoreString")
-                        }
-                    )
+                    append(" away")
                 }
-            }
+            )
+
+            Spacer(modifier = Modifier.height(4.dp))
+            Text(
+                buildAnnotatedString {
+                    append("\uD83C\uDF0E ")
+                    withStyle(
+                        style = SpanStyle(
+                            color = MaterialTheme.colorScheme.primary,
+                            fontWeight = FontWeight.Bold
+                        )
+                    ) {
+                        append(distanceScoreString)
+                    }
+                    append(" / $subMaxScoreString")
+                }
+            )
         }
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.spacedBy(10.dp),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Card(
-                modifier = Modifier.weight(1f)
-            ) {
-                Column(
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    modifier = Modifier.padding(12.dp)
-                ) {
-                    Text(
-                        buildAnnotatedString {
-                            append("Round Score: ")
-                            withStyle(
-                                style = SpanStyle(
-                                    color = MaterialTheme.colorScheme.primary,
-                                    fontWeight = FontWeight.Bold
-                                )
-                            ) {
-                                append(totalScoreString)
-                            }
-                            append(" / $maxScoreString")
-                        }
-                    )
-                }
-            }
+    }
+}
 
-            Button(
-                onClick = onNextRound
-            ) {
-                Text(if (isLastRound) "Show results" else "Next Round")
-            }
+@Composable
+fun RoundScoreCard(totalScoreString: String, maxScoreString: String, modifier: Modifier = Modifier) {
+    Card(
+        modifier = modifier
+    ) {
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
+            modifier = Modifier.padding(12.dp)
+        ) {
+            Text(
+                buildAnnotatedString {
+                    append("Round Score: ")
+                    withStyle(
+                        style = SpanStyle(
+                            color = MaterialTheme.colorScheme.primary,
+                            fontWeight = FontWeight.Bold
+                        )
+                    ) {
+                        append(totalScoreString)
+                    }
+                    append(" / $maxScoreString")
+                }
+            )
         }
     }
 }
