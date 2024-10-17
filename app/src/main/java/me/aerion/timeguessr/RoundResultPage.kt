@@ -2,6 +2,7 @@ package me.aerion.timeguessr
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -62,54 +63,89 @@ fun RoundResultPage(
     val subMaxScoreString = NumberFormat.getInstance().format(5000)
     val yearDifference = kotlin.math.abs(roundResult.guess.year.toInt() - round.Year.toInt())
     val resultLocation = round.Location.toLatLng()
-
     val distanceDiffWithUnitString = if (roundResult.distanceDiffInMeters < 1000) {
         "${roundResult.distanceDiffInMeters} meters"
     } else {
         "${roundResult.distanceDiffInMeters / 1000} km"
     }
 
-    Column(
-        modifier = modifier.padding(10.dp),
-        verticalArrangement = Arrangement.spacedBy(10.dp)
-    ) {
-        Row(
-            modifier = Modifier.weight(1f).fillMaxSize(),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(10.dp)
-        ) {
-            RoundDescriptionCard(
-                round = round,
-                yearDifference = yearDifference,
-                yearScoreString = yearScoreString,
-                subMaxScoreString = subMaxScoreString,
-                modifier = Modifier.weight(1f)
-            )
-
-            MapDistanceCard(
-                resultLocation = resultLocation,
-                roundResult = roundResult,
-                distanceDiffWithUnitString = distanceDiffWithUnitString,
-                distanceScoreString = distanceScoreString,
-                subMaxScoreString = subMaxScoreString,
-                modifier = Modifier.weight(1f)
-            )
-        }
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.spacedBy(10.dp),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            RoundScoreCard(
-                totalScoreString = totalScoreString,
-                maxScoreString = maxScoreString,
-                modifier = Modifier.weight(1f)
-            )
-
-            Button(
-                onClick = onNextRound
+    BoxWithConstraints(modifier = modifier) {
+        if (maxWidth < maxHeight) {
+            // Portrait layout
+            Column(
+                modifier = Modifier.padding(10.dp),
+                verticalArrangement = Arrangement.spacedBy(10.dp)
             ) {
-                Text(if (isLastRound) "Show results" else "Next Round")
+                RoundDescriptionCard(
+                    round = round,
+                    yearDifference = yearDifference,
+                    yearScoreString = yearScoreString,
+                    subMaxScoreString = subMaxScoreString,
+                    modifier = Modifier.weight(1f)
+                )
+                MapDistanceCard(
+                    resultLocation = resultLocation,
+                    roundResult = roundResult,
+                    distanceDiffWithUnitString = distanceDiffWithUnitString,
+                    distanceScoreString = distanceScoreString,
+                    subMaxScoreString = subMaxScoreString,
+                    modifier = Modifier.weight(1f)
+                )
+                RoundScoreCard(
+                    totalScoreString = totalScoreString,
+                    maxScoreString = maxScoreString,
+                    modifier = Modifier.fillMaxWidth()
+                )
+                Button(
+                    onClick = onNextRound,
+                    modifier = Modifier.align(Alignment.CenterHorizontally)
+                ) {
+                    Text(if (isLastRound) "Show results" else "Next Round")
+                }
+            }
+        } else {
+            // Landscape layout
+            Column(
+                modifier = Modifier.padding(10.dp),
+                verticalArrangement = Arrangement.spacedBy(10.dp)
+            ) {
+                Row(
+                    modifier = Modifier.weight(1f).fillMaxSize(),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(10.dp)
+                ) {
+                    RoundDescriptionCard(
+                        round = round,
+                        yearDifference = yearDifference,
+                        yearScoreString = yearScoreString,
+                        subMaxScoreString = subMaxScoreString,
+                        modifier = Modifier.weight(1f)
+                    )
+                    MapDistanceCard(
+                        resultLocation = resultLocation,
+                        roundResult = roundResult,
+                        distanceDiffWithUnitString = distanceDiffWithUnitString,
+                        distanceScoreString = distanceScoreString,
+                        subMaxScoreString = subMaxScoreString,
+                        modifier = Modifier.weight(1f)
+                    )
+                }
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.spacedBy(10.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    RoundScoreCard(
+                        totalScoreString = totalScoreString,
+                        maxScoreString = maxScoreString,
+                        modifier = Modifier.weight(1f)
+                    )
+                    Button(
+                        onClick = onNextRound
+                    ) {
+                        Text(if (isLastRound) "Show results" else "Next Round")
+                    }
+                }
             }
         }
     }
@@ -278,7 +314,7 @@ fun RoundScoreCard(totalScoreString: String, maxScoreString: String, modifier: M
     ) {
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
-            modifier = Modifier.padding(12.dp)
+            modifier = Modifier.padding(12.dp).fillMaxWidth()
         ) {
             Text(
                 buildAnnotatedString {
