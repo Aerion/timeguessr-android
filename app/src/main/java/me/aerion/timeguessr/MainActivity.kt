@@ -32,7 +32,7 @@ enum class Page {
 }
 
 class MainActivity : ComponentActivity() {
-    private val roundDataSource: RoundDataFetcher = /*NetworkRoundDataFetcher()*/ StubbedRoundDataFetcher()
+    private val roundDataSource: RoundDataFetcher = NetworkRoundDataFetcher()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
