@@ -1,10 +1,13 @@
 package me.aerion.timeguessr
 
 import android.content.res.Configuration
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
@@ -51,109 +54,136 @@ fun RoundPlayPage(
     }
 
     val totalScoreString = NumberFormat.getNumberInstance().format(totalScore)
-    val configuration = LocalConfiguration.current
 
-    if (configuration.orientation == Configuration.ORIENTATION_LANDSCAPE) {
-        Row(modifier.fillMaxSize()) {
-            Column(modifier = Modifier.weight(1f)) {
-                Text (
-                    text = "Score: $totalScoreString | Round: ${currentRoundIndex + 1}/5",
-                    modifier = Modifier.padding(4.dp)
-                )
-                when (selectedTabIndex) {
-                    0 -> PhotoPage(round, modifier)
-                    1 -> MapPage(
-                        onPositionGuessChange = { positionGuess = it },
-                        positionGuess = positionGuess,
-                        cameraPositionState = cameraPositionState,
-                        modifier = modifier
-                    )
-                    2 -> GuessPage(
-                        positionGuess = positionGuess,
-                        year = year,
-                        onYearChange = { year = it },
-                        onSubmitGuess = {
-                            onRoundSubmit(Guess(year, positionGuess!!))
-                        },
-                        modifier = modifier
-                    )
-                }
-            }
-            NavigationRail {
-                Spacer(Modifier.weight(1f))
-                NavigationRailItem(
-                    selected = selectedTabIndex == 0,
-                    onClick = { selectedTabIndex = 0 },
-                    icon = { Icon(imageVector = Icons.Default.Image, contentDescription = null) },
-                    label = { Text("Photo") }
-                )
-                NavigationRailItem(
-                    selected = selectedTabIndex == 1,
-                    onClick = { selectedTabIndex = 1 },
-                    icon = { Icon(imageVector = Icons.Default.Map, contentDescription = null) },
-                    label = { Text("Map") }
-                )
-                NavigationRailItem(
-                    selected = selectedTabIndex == 2,
-                    onClick = { selectedTabIndex = 2 },
-                    icon = { Icon(imageVector = Icons.Default.Lightbulb, contentDescription = null) },
-                    label = { Text("Guess") }
-                )
-                Spacer(Modifier.weight(1f))
-            }
-        }
-    } else {
-        Column(modifier.fillMaxSize()) {
-            Text(
-                text = "Score: $totalScoreString | Round: ${currentRoundIndex + 1}/5",
-                modifier = Modifier.padding(16.dp)
-            )
-            Column(modifier = Modifier.weight(1f)) {
-                when (selectedTabIndex) {
-                    0 -> PhotoPage(round, modifier)
-                    1 -> MapPage(
-                        onPositionGuessChange = { positionGuess = it },
-                        positionGuess = positionGuess,
-                        cameraPositionState = cameraPositionState,
-                        modifier = modifier
-                    )
-                    2 -> GuessPage(
-                        positionGuess = positionGuess,
-                        year = year,
-                        onYearChange = { year = it },
-                        onSubmitGuess = {
-                            onRoundSubmit(Guess(year, positionGuess!!))
-                        },
-                        modifier = modifier
-                    )
-                }
-            }
+    BoxWithConstraints(modifier = modifier) {
+        if (maxWidth > maxHeight) {
+            Row(modifier.fillMaxSize()) {
+                Column(modifier = Modifier.weight(1f)) {
+                    Row(
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        modifier = Modifier.padding(4.dp).fillMaxWidth()
+                    ) {
+                        Text(
+                            text = "Round: ${currentRoundIndex + 1}/5",
+                        )
+                        Text(
+                            text = "Score: $totalScoreString"
+                        )
+                    }
+                    when (selectedTabIndex) {
+                        0 -> PhotoPage(round, modifier)
+                        1 -> MapPage(
+                            onPositionGuessChange = { positionGuess = it },
+                            positionGuess = positionGuess,
+                            cameraPositionState = cameraPositionState,
+                            modifier = modifier
+                        )
 
-            TabRow(
-                selectedTabIndex = selectedTabIndex,
-                indicator = { tabPositions ->
-                    TabRowDefaults.Indicator(
-                        Modifier.tabIndicatorOffset(tabPositions[selectedTabIndex])
+                        2 -> GuessPage(
+                            positionGuess = positionGuess,
+                            year = year,
+                            onYearChange = { year = it },
+                            onSubmitGuess = {
+                                onRoundSubmit(Guess(year, positionGuess!!))
+                            },
+                            modifier = modifier
+                        )
+                    }
+                }
+                NavigationRail {
+                    Spacer(Modifier.weight(1f))
+                    NavigationRailItem(
+                        selected = selectedTabIndex == 0,
+                        onClick = { selectedTabIndex = 0 },
+                        icon = {
+                            Icon(
+                                imageVector = Icons.Default.Image,
+                                contentDescription = null
+                            )
+                        },
+                        label = { Text("Photo") }
+                    )
+                    NavigationRailItem(
+                        selected = selectedTabIndex == 1,
+                        onClick = { selectedTabIndex = 1 },
+                        icon = { Icon(imageVector = Icons.Default.Map, contentDescription = null) },
+                        label = { Text("Map") }
+                    )
+                    NavigationRailItem(
+                        selected = selectedTabIndex == 2,
+                        onClick = { selectedTabIndex = 2 },
+                        icon = {
+                            Icon(
+                                imageVector = Icons.Default.Lightbulb,
+                                contentDescription = null
+                            )
+                        },
+                        label = { Text("Guess") }
+                    )
+                    Spacer(Modifier.weight(1f))
+                }
+            }
+        } else {
+            Column(modifier.fillMaxSize()) {
+                Row(
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    modifier = Modifier.padding(4.dp).fillMaxWidth()
+                ) {
+                    Text(
+                        text = "Round: ${currentRoundIndex + 1}/5",
+                    )
+                    Text(
+                        text = "Score: $totalScoreString"
                     )
                 }
-            ) {
-                Tab(selected = selectedTabIndex == 0, onClick = { selectedTabIndex = 0 }) {
-                    Spacer(modifier = Modifier.height(4.dp))
-                    Icon(imageVector = Icons.Default.Image, contentDescription = null)
-                    Spacer(modifier = Modifier.height(4.dp))
-                    Text("Photo")
+                Column(modifier = Modifier.weight(1f)) {
+                    when (selectedTabIndex) {
+                        0 -> PhotoPage(round, modifier)
+                        1 -> MapPage(
+                            onPositionGuessChange = { positionGuess = it },
+                            positionGuess = positionGuess,
+                            cameraPositionState = cameraPositionState,
+                            modifier = modifier
+                        )
+
+                        2 -> GuessPage(
+                            positionGuess = positionGuess,
+                            year = year,
+                            onYearChange = { year = it },
+                            onSubmitGuess = {
+                                onRoundSubmit(Guess(year, positionGuess!!))
+                            },
+                            modifier = modifier
+                        )
+                    }
                 }
-                Tab(selected = selectedTabIndex == 1, onClick = { selectedTabIndex = 1 }) {
-                    Spacer(modifier = Modifier.height(4.dp))
-                    Icon(imageVector = Icons.Default.Map, contentDescription = null)
-                    Spacer(modifier = Modifier.height(4.dp))
-                    Text("Map")
-                }
-                Tab(selected = selectedTabIndex == 2, onClick = { selectedTabIndex = 2 }) {
-                    Spacer(modifier = Modifier.height(4.dp))
-                    Icon(imageVector = Icons.Default.Lightbulb, contentDescription = null)
-                    Spacer(modifier = Modifier.height(4.dp))
-                    Text("Guess")
+
+                TabRow(
+                    selectedTabIndex = selectedTabIndex,
+                    indicator = { tabPositions ->
+                        TabRowDefaults.Indicator(
+                            Modifier.tabIndicatorOffset(tabPositions[selectedTabIndex])
+                        )
+                    }
+                ) {
+                    Tab(selected = selectedTabIndex == 0, onClick = { selectedTabIndex = 0 }) {
+                        Spacer(modifier = Modifier.height(4.dp))
+                        Icon(imageVector = Icons.Default.Image, contentDescription = null)
+                        Spacer(modifier = Modifier.height(4.dp))
+                        Text("Photo")
+                    }
+                    Tab(selected = selectedTabIndex == 1, onClick = { selectedTabIndex = 1 }) {
+                        Spacer(modifier = Modifier.height(4.dp))
+                        Icon(imageVector = Icons.Default.Map, contentDescription = null)
+                        Spacer(modifier = Modifier.height(4.dp))
+                        Text("Map")
+                    }
+                    Tab(selected = selectedTabIndex == 2, onClick = { selectedTabIndex = 2 }) {
+                        Spacer(modifier = Modifier.height(4.dp))
+                        Icon(imageVector = Icons.Default.Lightbulb, contentDescription = null)
+                        Spacer(modifier = Modifier.height(4.dp))
+                        Text("Guess")
+                    }
                 }
             }
         }
