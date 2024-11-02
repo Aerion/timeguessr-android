@@ -35,11 +35,12 @@ fun GuessPage(
     modifier: Modifier = Modifier
 ) {
     val keyboardController = LocalSoftwareKeyboardController.current
-    val isSubmitEnabled = year != 0 && positionGuess != null
 
     val minYear = 1900
     val maxYear = java.util.Calendar.getInstance().get(java.util.Calendar.YEAR)
     val defaultYear = (maxYear - minYear) / 2 + minYear
+
+    val isSubmitEnabled = year in minYear..maxYear && positionGuess != null
 
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -49,13 +50,16 @@ fun GuessPage(
         Text("Input your guess for the year")
         Spacer(Modifier.height(20.dp))
         TextField(
-            value = if (year == 0) defaultYear.toString() else year.toString(),
+            value = when (year) {
+                0 -> defaultYear.toString()
+                -1 -> ""
+                else -> year.toString()
+            },
             onValueChange = { newValue ->
-                if (newValue.all { it.isDigit() }) {
-                    val newYear = newValue.toInt()
-                    if (newYear in minYear..maxYear) {
-                        onYearChange(newYear)
-                    }
+                if (newValue.isNotEmpty() && newValue.all { it.isDigit() }) {
+                    onYearChange(newValue.toInt())
+                } else {
+                    onYearChange(-1)
                 }
             },
             label = { Text("Year guess") },
