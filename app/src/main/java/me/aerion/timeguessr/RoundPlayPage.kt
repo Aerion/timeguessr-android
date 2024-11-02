@@ -1,6 +1,5 @@
 package me.aerion.timeguessr
 
-import android.content.res.Configuration
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
@@ -29,12 +28,14 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.LatLng
 import com.google.maps.android.compose.rememberCameraPositionState
+import me.saket.telephoto.zoomable.ZoomSpec
+import me.saket.telephoto.zoomable.rememberZoomableImageState
+import me.saket.telephoto.zoomable.rememberZoomableState
 import java.text.NumberFormat
 
 @Composable
@@ -52,6 +53,12 @@ fun RoundPlayPage(
     val cameraPositionState = rememberCameraPositionState {
         position = CameraPosition.fromLatLngZoom(positionGuess ?: LatLng(51.48633971492552, 3.691691980292835), 4f)
     }
+
+    val photoZoomState = rememberZoomableImageState(
+            rememberZoomableState(
+            zoomSpec = ZoomSpec(maxZoomFactor = 10f)
+        )
+    )
 
     val totalScoreString = NumberFormat.getNumberInstance().format(totalScore)
 
@@ -71,7 +78,7 @@ fun RoundPlayPage(
                         )
                     }
                     when (selectedTabIndex) {
-                        0 -> PhotoPage(round, modifier)
+                        0 -> PhotoPage(round, photoZoomState, modifier)
                         1 -> MapPage(
                             onPositionGuessChange = { positionGuess = it },
                             positionGuess = positionGuess,
@@ -138,7 +145,7 @@ fun RoundPlayPage(
                 }
                 Column(modifier = Modifier.weight(1f)) {
                     when (selectedTabIndex) {
-                        0 -> PhotoPage(round, modifier)
+                        0 -> PhotoPage(round, photoZoomState, modifier)
                         1 -> MapPage(
                             onPositionGuessChange = { positionGuess = it },
                             positionGuess = positionGuess,
