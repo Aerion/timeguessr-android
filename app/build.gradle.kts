@@ -62,8 +62,6 @@ dependencies {
     implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.androidx.material3)
     implementation(libs.zoomable.image.coil)
-    implementation(libs.coil.compose)
-    implementation(libs.coil.network.okhttp)
     implementation(libs.maps.compose)
     implementation(libs.maps.compose.widgets)
     implementation(libs.okhttp)
