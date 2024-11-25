@@ -1,6 +1,5 @@
 package me.aerion.timeguessr
 
-import android.graphics.ColorSpace
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -31,7 +30,6 @@ fun PhotoPage(
     val imageModel = ImageRequest.Builder(context)
         .data(roundData.URL)
         .setParameter("retry", retryCount)
-        .colorSpace(ColorSpace.get(ColorSpace.Named.SRGB))
         .build()
 
     PullToRefreshBox(
