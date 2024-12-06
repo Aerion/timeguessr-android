@@ -45,6 +45,7 @@ fun PhotoPage(
             contentDescription = null,
             modifier = modifier.fillMaxSize().verticalScroll(rememberScrollState()),
             state = photoZoomState,
+            onDoubleClick = IncrementalZoomOnDoubleClick()
         )
     }
 }
