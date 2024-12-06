@@ -1,7 +1,6 @@
 package me.aerion.timeguessr
 
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -32,6 +31,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.tooling.preview.PreviewParameterProvider
 import androidx.compose.ui.unit.dp
+import coil3.compose.AsyncImage
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.Dash
@@ -45,7 +45,6 @@ import com.google.maps.android.compose.MapUiSettings
 import com.google.maps.android.compose.Polyline
 import com.google.maps.android.compose.rememberCameraPositionState
 import com.google.maps.android.compose.rememberMarkerState
-import me.saket.telephoto.zoomable.coil.ZoomableAsyncImage
 import java.text.NumberFormat
 
 @Composable
@@ -161,7 +160,7 @@ fun RoundDescriptionCard(round: RoundData, yearDifference: Int, yearScoreString:
             modifier = Modifier.padding(10.dp).fillMaxWidth()
         ) {
             Text(text = round.Description, fontStyle = FontStyle.Italic)
-            ZoomableAsyncImage(
+            AsyncImage(
                 model = round.URL,
                 contentDescription = null,
                 modifier = Modifier.weight(1f).padding(vertical = 4.dp)

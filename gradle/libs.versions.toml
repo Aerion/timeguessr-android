@@ -1,25 +1,26 @@
 [versions]
 agp = "8.6.0"
 kotlin = "1.9.0"
-coreKtx = "1.13.1"
+coreKtx = "1.15.0"
 junit = "4.13.2"
 junitVersion = "1.2.1"
 espressoCore = "3.6.1"
 lifecycleRuntimeKtx = "2.8.7"
 activityCompose = "1.9.3"
-composeBom = "2024.10.01"
+composeBom = "2024.11.00"
 zoomableAndroid = "0.13.0"
 zoomableImage = "0.13.0"
 zoomableImageCoil = "0.14.0"
 coilCompose = "3.0.0-alpha10"
 coilNetworkOkhttp = "3.0.0-alpha10"
-mapsCompose = "6.2.0"
-mapsComposeWidgets = "6.2.0"
+mapsCompose = "6.3.0"
+mapsComposeWidgets = "6.3.0"
 okhttp = "4.12.0"
-moshi = "1.15.1"
-moshiKotlin = "1.15.1"
+moshi = "1.15.2"
+moshiKotlin = "1.15.2"
 orgJetbrainsKotlinPluginParcelizeGradlePlugin = "2.1.0-Beta1"
 materialIconsExtended = "1.7.5"
+coilNetworkOkhttpVersion = "3.0.4"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -38,7 +39,7 @@ androidx-ui-test-junit4 = { group = "androidx.compose.ui", name = "ui-test-junit
 androidx-material3 = { group = "androidx.compose.material3", name = "material3" }
 zoomable-android = { group = "me.saket.telephoto", name = "zoomable-android", version.ref = "zoomableAndroid" }
 zoomable-image = { group = "me.saket.telephoto", name = "zoomable-image", version.ref = "zoomableImage" }
-zoomable-image-coil = { group = "me.saket.telephoto", name = "zoomable-image-coil", version.ref = "zoomableImageCoil" }
+zoomable-image-coil3 = { group = "me.saket.telephoto", name = "zoomable-image-coil3", version.ref = "zoomableImageCoil" }
 maps-compose = { group = "com.google.maps.android", name = "maps-compose", version.ref = "mapsCompose" }
 maps-compose-widgets = { group = "com.google.maps.android", name = "maps-compose-widgets", version.ref = "mapsComposeWidgets" }
 okhttp = { group = "com.squareup.okhttp3", name = "okhttp", version.ref = "okhttp" }
@@ -46,6 +47,7 @@ moshi = { group = "com.squareup.moshi", name = "moshi", version.ref = "moshi" }
 moshi-kotlin = { group = "com.squareup.moshi", name = "moshi-kotlin", version.ref = "moshiKotlin" }
 org-jetbrains-kotlin-plugin-parcelize-gradle-plugin = { group = "org.jetbrains.kotlin.plugin.parcelize", name = "org.jetbrains.kotlin.plugin.parcelize.gradle.plugin", version.ref = "orgJetbrainsKotlinPluginParcelizeGradlePlugin" }
 androidx-material-icons-extended = { group = "androidx.compose.material", name = "material-icons-extended", version.ref = "materialIconsExtended" }
+coil-network-okhttp = { group = "io.coil-kt.coil3", name = "coil-network-okhttp", version.ref = "coilNetworkOkhttpVersion" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

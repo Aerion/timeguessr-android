@@ -13,9 +13,9 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
-import coil.request.ImageRequest
+import coil3.request.ImageRequest
 import me.saket.telephoto.zoomable.ZoomableImageState
-import me.saket.telephoto.zoomable.coil.ZoomableAsyncImage
+import me.saket.telephoto.zoomable.coil3.ZoomableAsyncImage
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -26,11 +26,7 @@ fun PhotoPage(
 ) {
     var isRefreshing by remember { mutableStateOf(false) }
     var retryCount by remember { mutableIntStateOf(0) }
-    val context = LocalContext.current
-    val imageModel = ImageRequest.Builder(context)
-        .data(roundData.URL)
-        .setParameter("retry", retryCount)
-        .build()
+    val url = roundData.URL + if (retryCount > 0) "?retry=$retryCount" else ""
 
     PullToRefreshBox(
         isRefreshing = isRefreshing,
@@ -41,7 +37,7 @@ fun PhotoPage(
         },
     ) {
         ZoomableAsyncImage(
-            model = imageModel,
+            model = url,
             contentDescription = null,
             modifier = modifier.fillMaxSize().verticalScroll(rememberScrollState()),
             state = photoZoomState,
