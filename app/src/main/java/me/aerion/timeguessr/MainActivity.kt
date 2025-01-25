@@ -8,6 +8,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.statusBarsPadding
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -18,6 +19,8 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import coil3.imageLoader
+import coil3.request.ImageRequest
 import me.aerion.timeguessr.ui.theme.TimeguessrTheme
 
 // TODO: Restrict api key
@@ -50,12 +53,21 @@ class MainActivity : ComponentActivity() {
                     var roundResults by rememberSaveable { mutableStateOf<List<RoundResult>>(emptyList()) }
 
                     LaunchedEffect(Unit) {
-                        rounds.value = roundDataSource.fetchRounds()
+                        val roundsList = roundDataSource.fetchRounds()!!
+                        for (round in roundsList) {
+                            // Preload the images: https://coil-kt.github.io/coil/faq/#how-do-i-preload-an-image
+                            imageLoader.enqueue(
+                                ImageRequest.Builder(context = applicationContext).data(round.URL)
+                                    .build()
+                            )
+                        }
+                        rounds.value = roundsList
                     }
 
                     // Show a loader while the data is being fetched
                     if (rounds.value == null) {
                         Text("Loading...")
+                        CircularProgressIndicator()
                         return@Surface
                     }
 
