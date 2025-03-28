@@ -58,7 +58,7 @@ class NetworkRoundDataFetcher : RoundDataFetcher {
                         roundDataAdapter.fromJson(cleanedResponseBody)?.toList()
                     }
                 }
-            } catch (e: IOException) {
+            } catch (e: Exception) {
                 e.printStackTrace()
                 null
             }
