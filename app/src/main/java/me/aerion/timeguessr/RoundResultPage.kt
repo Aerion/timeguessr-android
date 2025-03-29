@@ -31,7 +31,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.tooling.preview.PreviewParameterProvider
 import androidx.compose.ui.unit.dp
-import coil3.compose.AsyncImage
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.Dash
@@ -45,6 +44,7 @@ import com.google.maps.android.compose.MapUiSettings
 import com.google.maps.android.compose.Polyline
 import com.google.maps.android.compose.rememberCameraPositionState
 import com.google.maps.android.compose.rememberMarkerState
+import me.saket.telephoto.zoomable.coil3.ZoomableAsyncImage
 import java.text.NumberFormat
 
 @Composable
@@ -160,10 +160,11 @@ fun RoundDescriptionCard(round: RoundData, yearDifference: Int, yearScoreString:
             modifier = Modifier.padding(10.dp).fillMaxWidth()
         ) {
             Text(text = round.Description, fontStyle = FontStyle.Italic)
-            AsyncImage(
+            ZoomableAsyncImage(
                 model = round.URL,
                 contentDescription = null,
-                modifier = Modifier.weight(1f).padding(vertical = 4.dp)
+                modifier = Modifier.weight(1f).padding(vertical = 4.dp).fillMaxSize(),
+                onDoubleClick = IncrementalZoomOnDoubleClick()
             )
             Text(
                 buildAnnotatedString {
