@@ -41,8 +41,6 @@ import me.aerion.timeguessr.ui.theme.TimeguessrTheme
 // TODO: Enable zooming / popping out the image to full screen in the result page
 // TODO: Reduce the size of the app
 // TODO: Publish on app store
-// TODO: Add a loader when fetching the rounds
-// TODO: Display a message on network error
 
 enum class Page {
     RoundPlayPage,
