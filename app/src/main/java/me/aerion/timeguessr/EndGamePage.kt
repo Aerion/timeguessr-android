@@ -11,6 +11,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Share
 import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -45,7 +46,7 @@ fun EndGamePage(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center,
     ) {
-        Text("Total Score: ${totalScoreString}/${maxScoreString}")
+        Text("Timeguessr #$dailyNumber")
 
         Spacer(modifier = Modifier.height(6.dp))
 
@@ -56,6 +57,10 @@ fun EndGamePage(
                 }"
             )
         }
+
+        Spacer(modifier = Modifier.height(6.dp))
+
+        Text("Total Score: ${totalScoreString}/${maxScoreString}")
 
         Spacer(modifier = Modifier.height(6.dp))
 
