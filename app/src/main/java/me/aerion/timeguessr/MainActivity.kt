@@ -20,7 +20,10 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.SnackbarResult
 import androidx.compose.material3.Text
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -32,12 +35,15 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.LifecycleResumeEffect
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import me.aerion.timeguessr.ui.theme.TimeguessrTheme
 
 // TODO: Restrict api key
 // TODO: Add result map with all of the guesses
-// TODO: Store daily number and results locally and add a refresh button to check if there is a new daily
 // TODO: Reduce the size of the app
 // TODO: Publish on app store
 
@@ -54,39 +60,77 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
+            var loadingStatus by remember { mutableStateOf("LOADING") }
+            var retryRoundFetchTrigger by remember { mutableStateOf(0) }
+            var rounds by rememberSaveable { mutableStateOf<List<RoundData>?>(null) }
+            var currentPage by rememberSaveable { mutableStateOf(Page.RoundPlayPage) }
+            var currentRoundIndex by rememberSaveable { mutableIntStateOf(0) }
+            var roundResults by rememberSaveable { mutableStateOf<List<RoundResult>>(emptyList()) }
+            val endGameRefreshCorountineScope = CoroutineScope(context = Dispatchers.IO)
+            val snackbarHostState = remember { SnackbarHostState() }
+
+            LaunchedEffect(retryRoundFetchTrigger) {
+                loadingStatus = "LOADING"
+                currentRoundIndex = 0
+                rounds = null
+                roundResults = emptyList()
+                currentPage = Page.RoundPlayPage
+
+                if (retryRoundFetchTrigger > 0) {
+                    delay(1000)
+                }
+
+                val roundsList = roundDataSource.fetchRounds()
+                Log.i("TimeGuessr", "Rounds: $roundsList")
+
+                if (roundsList == null) {
+                    loadingStatus = "ERROR"
+                    return@LaunchedEffect
+                }
+
+                rounds = roundsList
+                loadingStatus = "LOADED"
+            }
+
+            LifecycleResumeEffect(Unit) {
+                if (currentPage == Page.EndGamePage) {
+                    endGameRefreshCorountineScope.launch {
+                        try {
+                            Log.d("TimeGuessr", "Checking for new daily")
+                            val newRoundsList = roundDataSource.fetchRounds()
+                            if (newRoundsList != null && newRoundsList[0].No > rounds!![0].No) {
+                                Log.d("TimeGuessr", "New daily available")
+                                if (snackbarHostState.showSnackbar(
+                                        message = "New daily available",
+                                        actionLabel = "Update"
+                                    ) == SnackbarResult.ActionPerformed
+                                ) {
+                                    // Trigger a fresh round fetch.
+                                    // One could also just update the rounds list here, but this way we're sure to always get the latest data.
+                                    retryRoundFetchTrigger++
+                                }
+                            }
+                        } catch (e: Exception) {
+                            Log.e("TimeGuessr", "Error in coroutine fetching end game new daily", e)
+                        }
+                    }
+                }
+
+                onPauseOrDispose {
+                }
+            }
+
             TimeguessrTheme(dynamicColor = false) {
-                Surface(
-                    color = MaterialTheme.colorScheme.background,
+                Scaffold(
                     modifier = Modifier.fillMaxSize()
                         .background(MaterialTheme.colorScheme.background)
-                        .statusBarsPadding().navigationBarsPadding()
-                ) {
-                    var loadingStatus by remember { mutableStateOf("LOADING") }
-                    var retryRoundFetchTrigger by remember { mutableStateOf(0) }
-                    val rounds = rememberSaveable { mutableStateOf<List<RoundData>?>(null) }
-                    var currentPage by rememberSaveable { mutableStateOf(Page.RoundPlayPage) }
-                    var currentRoundIndex by rememberSaveable { mutableIntStateOf(0) }
-                    var roundResults by rememberSaveable { mutableStateOf<List<RoundResult>>(emptyList()) }
-
-                    LaunchedEffect(retryRoundFetchTrigger) {
-                        loadingStatus = "LOADING"
-                        if (retryRoundFetchTrigger > 0) {
-                            delay(1000)
-                        }
-
-                        val roundsList = roundDataSource.fetchRounds()
-                        Log.i("TimeGuessr", "Rounds: $roundsList")
-
-                        if (roundsList == null) {
-                            loadingStatus = "ERROR"
-                            return@LaunchedEffect
-                        }
-
-                        rounds.value = roundsList
-                        loadingStatus = "LOADED"
-                    }
-
-                    Log.d("TimeGuessr", "loadingStatus: $loadingStatus")
+                        .statusBarsPadding().navigationBarsPadding(),
+                    snackbarHost = {
+                        SnackbarHost(hostState = snackbarHostState)
+                    },
+                ) { innerPadding ->
+                    // Remove the warning about unused innerPadding
+                    val unused = innerPadding;
 
                     if (loadingStatus == "ERROR") {
                         Column(
@@ -102,7 +146,7 @@ class MainActivity : ComponentActivity() {
                                 Icon(Icons.Default.RestartAlt, modifier = Modifier.width(18.dp), contentDescription = null)
                             }
                         }
-                        return@Surface
+                        return@Scaffold
                     }
 
                     // Show a loader while the data is being fetched
@@ -116,10 +160,10 @@ class MainActivity : ComponentActivity() {
                             Spacer(Modifier.height(8.dp))
                             CircularProgressIndicator()
                         }
-                        return@Surface
+                        return@Scaffold
                     }
 
-                    val currentRound = rounds.value!![currentRoundIndex]
+                    val currentRound = rounds!![currentRoundIndex]
                     val totalScore = roundResults.sumOf { it.totalScore }
 
                     when (currentPage) {
@@ -152,9 +196,9 @@ class MainActivity : ComponentActivity() {
                             round = currentRound,
                             roundResult = roundResults.last(),
                             modifier = Modifier.fillMaxSize(),
-                            isLastRound = currentRoundIndex == rounds.value!!.size - 1,
+                            isLastRound = currentRoundIndex == rounds!!.size - 1,
                             onNextRound = {
-                                if (currentRoundIndex < rounds.value!!.size - 1) {
+                                if (currentRoundIndex < rounds!!.size - 1) {
                                     currentRoundIndex++
                                     currentPage = Page.RoundPlayPage
                                 } else {
