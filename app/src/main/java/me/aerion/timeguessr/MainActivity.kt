@@ -42,7 +42,6 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import me.aerion.timeguessr.ui.theme.TimeguessrTheme
 
-// TODO: Restrict api key
 // TODO: Add result map with all of the guesses
 // TODO: Reduce the size of the app
 // TODO: Publish on app store
