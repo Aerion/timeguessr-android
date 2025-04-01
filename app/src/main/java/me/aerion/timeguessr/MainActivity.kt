@@ -59,8 +59,8 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
-            var loadingStatus by remember { mutableStateOf("LOADING") }
-            var retryRoundFetchTrigger by remember { mutableStateOf(0) }
+            var loadingStatus by rememberSaveable { mutableStateOf("LOADING") }
+            var retryRoundFetchTrigger by rememberSaveable { mutableIntStateOf(0) }
             var rounds by rememberSaveable { mutableStateOf<List<RoundData>?>(null) }
             var currentPage by rememberSaveable { mutableStateOf(Page.RoundPlayPage) }
             var currentRoundIndex by rememberSaveable { mutableIntStateOf(0) }
