@@ -30,6 +30,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -54,10 +55,15 @@ enum class Page {
 
 class MainActivity : ComponentActivity() {
     private val roundDataSource: RoundDataFetcher = NetworkRoundDataFetcher()
+    private lateinit var appStateRepository: AppStateRepository
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
+
+        // Initialize the repository
+        appStateRepository = AppStateRepository(this)
+
         setContent {
             var loadingStatus by rememberSaveable { mutableStateOf("LOADING") }
             var retryRoundFetchTrigger by rememberSaveable { mutableIntStateOf(0) }
@@ -67,8 +73,9 @@ class MainActivity : ComponentActivity() {
             var roundResults by rememberSaveable { mutableStateOf<List<RoundResult>>(emptyList()) }
             val endGameRefreshCorountineScope = CoroutineScope(context = Dispatchers.IO)
             val snackbarHostState = remember { SnackbarHostState() }
+            val coroutineScope = rememberCoroutineScope()
 
-            LaunchedEffect(retryRoundFetchTrigger) {
+            suspend fun fetchNewRounds() {
                 loadingStatus = "LOADING"
                 currentRoundIndex = 0
                 rounds = null
@@ -84,11 +91,66 @@ class MainActivity : ComponentActivity() {
 
                 if (roundsList == null) {
                     loadingStatus = "ERROR"
-                    return@LaunchedEffect
+                    return
                 }
 
                 rounds = roundsList
                 loadingStatus = "LOADED"
+            }
+
+            // Load saved state when the app starts
+            LaunchedEffect(Unit) {
+                try {
+                    val savedRounds = appStateRepository.getSavedRounds()
+                    val savedRoundResults = appStateRepository.getSavedRoundResults()
+                    val savedCurrentRoundIndex = appStateRepository.getSavedCurrentRoundIndex()
+                    val savedCurrentPage = appStateRepository.getSavedCurrentPage()
+
+                    if (savedRounds != null) {
+                        // Check if there are new rounds available
+                        val newRounds = roundDataSource.fetchRounds()
+                        if (newRounds != null && newRounds[0].No > savedRounds[0].No) {
+                            // If new rounds are available, use them and reset the state
+                            rounds = newRounds
+                            currentRoundIndex = 0
+                            roundResults = emptyList()
+                            currentPage = Page.RoundPlayPage
+                        } else {
+                            // Otherwise use the saved state
+                            rounds = savedRounds
+                            roundResults = savedRoundResults
+                            currentRoundIndex = savedCurrentRoundIndex
+                            currentPage = savedCurrentPage
+                        }
+                        loadingStatus = "LOADED"
+                    } else {
+                        // No saved state, proceed with initial loading
+                        fetchNewRounds()
+                    }
+                } catch (e: Exception) {
+                    Log.e("TimeGuessr", "Error loading saved state", e)
+                    fetchNewRounds()
+                }
+            }
+
+            // Save state whenever it changes
+            LaunchedEffect(rounds, roundResults, currentRoundIndex, currentPage) {
+                if (rounds != null) {
+                    coroutineScope.launch {
+                        appStateRepository.saveAppState(
+                            rounds = rounds,
+                            roundResults = roundResults,
+                            currentRoundIndex = currentRoundIndex,
+                            currentPage = currentPage
+                        )
+                    }
+                }
+            }
+
+            LaunchedEffect(retryRoundFetchTrigger) {
+                if (retryRoundFetchTrigger > 0) {
+                    fetchNewRounds()
+                }
             }
 
             LifecycleResumeEffect(Unit) {
@@ -97,7 +159,7 @@ class MainActivity : ComponentActivity() {
                         try {
                             Log.d("TimeGuessr", "Checking for new daily")
                             val newRoundsList = roundDataSource.fetchRounds()
-                            if (newRoundsList != null && newRoundsList[0].No > rounds!![0].No) {
+                            if (newRoundsList != null && rounds != null && newRoundsList[0].No > rounds!![0].No) {
                                 Log.d("TimeGuessr", "New daily available")
                                 if (snackbarHostState.showSnackbar(
                                         message = "New daily available",
@@ -116,6 +178,17 @@ class MainActivity : ComponentActivity() {
                 }
 
                 onPauseOrDispose {
+                    // Save state when app goes to background
+                    coroutineScope.launch {
+                        if (rounds != null) {
+                            appStateRepository.saveAppState(
+                                rounds = rounds,
+                                roundResults = roundResults,
+                                currentRoundIndex = currentRoundIndex,
+                                currentPage = currentPage
+                            )
+                        }
+                    }
                 }
             }
 
