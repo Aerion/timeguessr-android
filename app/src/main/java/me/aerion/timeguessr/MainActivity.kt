@@ -154,7 +154,7 @@ class MainActivity : ComponentActivity() {
             }
 
             LifecycleResumeEffect(Unit) {
-                if (currentPage == Page.EndGamePage) {
+                if (loadingStatus == "LOADED") {
                     endGameRefreshCorountineScope.launch {
                         try {
                             Log.d("TimeGuessr", "Checking for new daily")
@@ -163,7 +163,8 @@ class MainActivity : ComponentActivity() {
                                 Log.d("TimeGuessr", "New daily available")
                                 if (snackbarHostState.showSnackbar(
                                         message = "New daily available",
-                                        actionLabel = "Update"
+                                        actionLabel = "Update",
+                                        withDismissAction = true,
                                     ) == SnackbarResult.ActionPerformed
                                 ) {
                                     // Trigger a fresh round fetch.
