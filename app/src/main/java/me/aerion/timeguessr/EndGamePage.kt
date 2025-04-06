@@ -46,7 +46,7 @@ fun EndGamePage(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center,
     ) {
-        Text("Timeguessr #$dailyNumber")
+        Text("Total Score: ${totalScoreString}/${maxScoreString}")
 
         Spacer(modifier = Modifier.height(6.dp))
 
@@ -60,7 +60,7 @@ fun EndGamePage(
 
         Spacer(modifier = Modifier.height(6.dp))
 
-        Text("Total Score: ${totalScoreString}/${maxScoreString}")
+        Text("Timeguessr #$dailyNumber")
 
         Spacer(modifier = Modifier.height(6.dp))
 
