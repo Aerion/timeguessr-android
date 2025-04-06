@@ -51,11 +51,16 @@ fun RoundPlayPage(
     var year by rememberSaveable { mutableIntStateOf(0) }
 
     val cameraPositionState = rememberCameraPositionState {
-        position = CameraPosition.fromLatLngZoom(positionGuess ?: LatLng(51.48633971492552, 3.691691980292835), 4f)
+        position = CameraPosition.fromLatLngZoom(
+            positionGuess ?: LatLng(
+                51.48633971492552,
+                3.691691980292835
+            ), 4f
+        )
     }
 
     val photoZoomState = rememberZoomableImageState(
-            rememberZoomableState(
+        rememberZoomableState(
             zoomSpec = ZoomSpec(maxZoomFactor = 10f)
         )
     )
@@ -68,7 +73,9 @@ fun RoundPlayPage(
                 Column(modifier = Modifier.weight(1f)) {
                     Row(
                         horizontalArrangement = Arrangement.SpaceBetween,
-                        modifier = Modifier.padding(4.dp).fillMaxWidth()
+                        modifier = Modifier
+                            .padding(4.dp)
+                            .fillMaxWidth()
                     ) {
                         Text(
                             text = "Round: ${currentRoundIndex + 1}/5",
@@ -134,7 +141,9 @@ fun RoundPlayPage(
             Column(modifier.fillMaxSize()) {
                 Row(
                     horizontalArrangement = Arrangement.SpaceBetween,
-                    modifier = Modifier.padding(4.dp).fillMaxWidth()
+                    modifier = Modifier
+                        .padding(4.dp)
+                        .fillMaxWidth()
                 ) {
                     Text(
                         text = "Round: ${currentRoundIndex + 1}/5",

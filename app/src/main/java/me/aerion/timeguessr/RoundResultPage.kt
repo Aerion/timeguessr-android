@@ -109,7 +109,9 @@ fun RoundResultPage(
                 verticalArrangement = Arrangement.spacedBy(10.dp)
             ) {
                 Row(
-                    modifier = Modifier.weight(1f).fillMaxSize(),
+                    modifier = Modifier
+                        .weight(1f)
+                        .fillMaxSize(),
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.spacedBy(10.dp)
                 ) {
@@ -151,19 +153,30 @@ fun RoundResultPage(
 }
 
 @Composable
-fun RoundDescriptionCard(round: RoundData, yearDifference: Int, yearScoreString: String, subMaxScoreString: String, modifier: Modifier = Modifier) {
+fun RoundDescriptionCard(
+    round: RoundData,
+    yearDifference: Int,
+    yearScoreString: String,
+    subMaxScoreString: String,
+    modifier: Modifier = Modifier
+) {
     Card(
         modifier = modifier
     ) {
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
-            modifier = Modifier.padding(10.dp).fillMaxWidth()
+            modifier = Modifier
+                .padding(10.dp)
+                .fillMaxWidth()
         ) {
             Text(text = round.Description, fontStyle = FontStyle.Italic)
             ZoomableAsyncImage(
                 model = round.URL,
                 contentDescription = null,
-                modifier = Modifier.weight(1f).padding(vertical = 4.dp).fillMaxSize(),
+                modifier = Modifier
+                    .weight(1f)
+                    .padding(vertical = 4.dp)
+                    .fillMaxSize(),
                 onDoubleClick = IncrementalZoomOnDoubleClick()
             )
             Text(
@@ -216,7 +229,14 @@ fun RoundDescriptionCard(round: RoundData, yearDifference: Int, yearScoreString:
 }
 
 @Composable
-fun MapDistanceCard(resultLocation: LatLng, roundResult: RoundResult, distanceDiffWithUnitString: String, distanceScoreString: String, subMaxScoreString: String, modifier: Modifier = Modifier) {
+fun MapDistanceCard(
+    resultLocation: LatLng,
+    roundResult: RoundResult,
+    distanceDiffWithUnitString: String,
+    distanceScoreString: String,
+    subMaxScoreString: String,
+    modifier: Modifier = Modifier
+) {
     val cameraPositionState = rememberCameraPositionState {
         position = CameraPosition.fromLatLngZoom(resultLocation, 1f)
     }
@@ -248,7 +268,9 @@ fun MapDistanceCard(resultLocation: LatLng, roundResult: RoundResult, distanceDi
     ) {
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
-            modifier = Modifier.padding(10.dp).fillMaxWidth()
+            modifier = Modifier
+                .padding(10.dp)
+                .fillMaxWidth()
         ) {
             GoogleMap(
                 modifier = Modifier.weight(1f),
@@ -308,13 +330,19 @@ fun MapDistanceCard(resultLocation: LatLng, roundResult: RoundResult, distanceDi
 }
 
 @Composable
-fun RoundScoreCard(totalScoreString: String, maxScoreString: String, modifier: Modifier = Modifier) {
+fun RoundScoreCard(
+    totalScoreString: String,
+    maxScoreString: String,
+    modifier: Modifier = Modifier
+) {
     Card(
         modifier = modifier
     ) {
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
-            modifier = Modifier.padding(12.dp).fillMaxWidth()
+            modifier = Modifier
+                .padding(12.dp)
+                .fillMaxWidth()
         ) {
             Text(
                 buildAnnotatedString {
@@ -334,7 +362,7 @@ fun RoundScoreCard(totalScoreString: String, maxScoreString: String, modifier: M
     }
 }
 
-private class BooleanProvider: PreviewParameterProvider<Boolean> {
+private class BooleanProvider : PreviewParameterProvider<Boolean> {
     override val values = sequenceOf(
         true, false
     )

@@ -71,7 +71,7 @@ class MainActivity : ComponentActivity() {
             var currentPage by rememberSaveable { mutableStateOf(Page.RoundPlayPage) }
             var currentRoundIndex by rememberSaveable { mutableIntStateOf(0) }
             var roundResults by rememberSaveable { mutableStateOf<List<RoundResult>>(emptyList()) }
-            val endGameRefreshCorountineScope = CoroutineScope(context = Dispatchers.IO)
+            val endGameRefreshCorountineScope = CoroutineScope(Dispatchers.IO)
             val snackbarHostState = remember { SnackbarHostState() }
             val coroutineScope = rememberCoroutineScope()
 
@@ -195,9 +195,11 @@ class MainActivity : ComponentActivity() {
 
             TimeguessrTheme(dynamicColor = false) {
                 Scaffold(
-                    modifier = Modifier.fillMaxSize()
+                    modifier = Modifier
+                        .fillMaxSize()
                         .background(MaterialTheme.colorScheme.background)
-                        .statusBarsPadding().navigationBarsPadding(),
+                        .statusBarsPadding()
+                        .navigationBarsPadding(),
                     snackbarHost = {
                         SnackbarHost(hostState = snackbarHostState)
                     },
@@ -216,7 +218,11 @@ class MainActivity : ComponentActivity() {
                             Button(onClick = { retryRoundFetchTrigger++ }) {
                                 Text("Retry")
                                 Spacer(modifier = Modifier.width(4.dp))
-                                Icon(Icons.Default.RestartAlt, modifier = Modifier.width(18.dp), contentDescription = null)
+                                Icon(
+                                    Icons.Default.RestartAlt,
+                                    modifier = Modifier.width(18.dp),
+                                    contentDescription = null
+                                )
                             }
                         }
                         return@Scaffold

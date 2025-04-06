@@ -9,7 +9,12 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 
 @Composable
-fun BackHandlerWithConfirmation(title: String, text: String, onConfirm: () -> Unit, onDismiss: () -> Unit) {
+fun BackHandlerWithConfirmation(
+    title: String,
+    text: String,
+    onConfirm: () -> Unit,
+    onDismiss: () -> Unit
+) {
     val showDialog = remember { mutableStateOf(false) }
 
     BackHandler {

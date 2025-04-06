@@ -63,8 +63,7 @@ fun PhotoPage(
         }
     }
 
-    if (loadingStatus == "LOADING")
-    {
+    if (loadingStatus == "LOADING") {
         Column(
             modifier = modifier.fillMaxSize(),
             horizontalAlignment = Alignment.CenterHorizontally,
@@ -77,8 +76,7 @@ fun PhotoPage(
         return
     }
 
-    if (loadingStatus == "ERROR")
-    {
+    if (loadingStatus == "ERROR") {
         Column(
             modifier = modifier.fillMaxSize(),
             horizontalAlignment = Alignment.CenterHorizontally,
@@ -89,7 +87,11 @@ fun PhotoPage(
             Button(onClick = { retryCount++ }) {
                 Text("Retry")
                 Spacer(modifier = Modifier.width(4.dp))
-                Icon(Icons.Default.RestartAlt, modifier = Modifier.width(18.dp), contentDescription = null)
+                Icon(
+                    Icons.Default.RestartAlt,
+                    modifier = Modifier.width(18.dp),
+                    contentDescription = null
+                )
             }
         }
         return
@@ -98,7 +100,9 @@ fun PhotoPage(
     ZoomableAsyncImage(
         model = request,
         contentDescription = null,
-        modifier = modifier.fillMaxSize().verticalScroll(rememberScrollState()),
+        modifier = modifier
+            .fillMaxSize()
+            .verticalScroll(rememberScrollState()),
         state = photoZoomState,
         onDoubleClick = IncrementalZoomOnDoubleClick()
     )

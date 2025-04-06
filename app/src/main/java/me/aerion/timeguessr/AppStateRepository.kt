@@ -2,12 +2,15 @@ package me.aerion.timeguessr
 
 import android.content.Context
 import androidx.datastore.core.DataStore
-import androidx.datastore.preferences.core.*
+import androidx.datastore.preferences.core.Preferences
+import androidx.datastore.preferences.core.edit
+import androidx.datastore.preferences.core.intPreferencesKey
+import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
-import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.firstOrNull
+import kotlinx.coroutines.flow.map
 
 val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "timeguessr_preferences")
 
@@ -31,7 +34,8 @@ class AppStateRepository(private val context: Context) {
         context.dataStore.edit { preferences ->
             rounds?.let {
                 preferences[PreferencesKeys.ROUNDS] = gson.toJson(it)
-                preferences[PreferencesKeys.LATEST_ROUND_NUMBER] = it.firstOrNull()?.No?.toInt() ?: 0
+                preferences[PreferencesKeys.LATEST_ROUND_NUMBER] =
+                    it.firstOrNull()?.No?.toInt() ?: 0
             }
             preferences[PreferencesKeys.ROUND_RESULTS] = gson.toJson(roundResults)
             preferences[PreferencesKeys.CURRENT_ROUND_INDEX] = currentRoundIndex

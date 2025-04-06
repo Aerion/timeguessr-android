@@ -11,7 +11,8 @@ internal class IncrementalZoomOnDoubleClick(
     private val maxZoomFactor: Float? = null
 ) : DoubleClickToZoomListener {
     override suspend fun onDoubleClick(state: ZoomableState, centroid: Offset) {
-        val transformation = state.contentTransformation.takeIf { it.isSpecified } ?: return // Content isn't ready yet
+        val transformation = state.contentTransformation.takeIf { it.isSpecified }
+            ?: return // Content isn't ready yet
         val maxZoomFactor = this.maxZoomFactor ?: state.zoomSpec.maxZoomFactor
         val newZoomFactor = transformation.scale.scaleX * incrementFactor
 

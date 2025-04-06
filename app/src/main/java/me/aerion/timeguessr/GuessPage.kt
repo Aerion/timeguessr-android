@@ -45,7 +45,9 @@ fun GuessPage(
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Bottom,
-        modifier = modifier.fillMaxSize().padding(bottom = 40.dp)
+        modifier = modifier
+            .fillMaxSize()
+            .padding(bottom = 40.dp)
     ) {
         Text("Input your guess for the year")
         Spacer(Modifier.height(20.dp))
