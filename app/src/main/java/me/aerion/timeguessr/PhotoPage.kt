@@ -1,5 +1,6 @@
 package me.aerion.timeguessr
 
+import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -20,6 +21,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -34,35 +36,12 @@ import me.saket.telephoto.zoomable.coil3.ZoomableAsyncImage
 
 @Composable
 fun PhotoPage(
-    roundData: RoundData,
     photoZoomState: ZoomableImageState,
+    imageModel: ImageRequest?,
+    loadingStatus: String,
+    onRetry: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    val context = LocalContext.current
-    var loadingStatus by remember { mutableStateOf("LOADING") }
-    var retryCount by remember { mutableIntStateOf(0) }
-    var request by remember { mutableStateOf<ImageRequest?>(null) }
-
-    LaunchedEffect(roundData.URL, retryCount) {
-        loadingStatus = "LOADING"
-
-        if (retryCount > 0) {
-            delay(1000)
-        }
-
-        val url = roundData.URL + if (retryCount > 0) "?retry=$retryCount" else ""
-        request = ImageRequest.Builder(context)
-            .data(url)
-            .build()
-        val result = ImageLoader(context).execute(request!!)
-
-        if (result is SuccessResult) {
-            loadingStatus = "SUCCESS"
-        } else {
-            loadingStatus = "ERROR"
-        }
-    }
-
     if (loadingStatus == "LOADING") {
         Column(
             modifier = modifier.fillMaxSize(),
@@ -84,7 +63,7 @@ fun PhotoPage(
         ) {
             Text("An error occurred while fetching the photo.")
             Spacer(Modifier.height(8.dp))
-            Button(onClick = { retryCount++ }) {
+            Button(onClick = onRetry) {
                 Text("Retry")
                 Spacer(modifier = Modifier.width(4.dp))
                 Icon(
@@ -98,7 +77,7 @@ fun PhotoPage(
     }
 
     ZoomableAsyncImage(
-        model = request,
+        model = imageModel,
         contentDescription = null,
         modifier = modifier
             .fillMaxSize()

@@ -1,5 +1,6 @@
 package me.aerion.timeguessr
 
+import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
@@ -22,17 +23,24 @@ import androidx.compose.material3.TabRowDefaults
 import androidx.compose.material3.TabRowDefaults.tabIndicatorOffset
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import coil3.ImageLoader
+import coil3.request.ImageRequest
+import coil3.request.SuccessResult
 import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.LatLng
 import com.google.maps.android.compose.rememberCameraPositionState
+import kotlinx.coroutines.delay
 import me.saket.telephoto.zoomable.ZoomSpec
 import me.saket.telephoto.zoomable.rememberZoomableImageState
 import me.saket.telephoto.zoomable.rememberZoomableState
@@ -46,9 +54,13 @@ fun RoundPlayPage(
     currentRoundIndex: Int,
     modifier: Modifier = Modifier
 ) {
+    val context = LocalContext.current
     var positionGuess by rememberSaveable { mutableStateOf<LatLng?>(null) }
     var selectedTabIndex by rememberSaveable { mutableIntStateOf(0) }
     var year by rememberSaveable { mutableIntStateOf(0) }
+    var imageLoadingRetryCount by remember { mutableIntStateOf(0) }
+    var imageRequest by remember { mutableStateOf<ImageRequest?>(null) }
+    var imageLoadingStatus by remember { mutableStateOf("LOADING") }
 
     val cameraPositionState = rememberCameraPositionState {
         position = CameraPosition.fromLatLngZoom(
@@ -66,6 +78,32 @@ fun RoundPlayPage(
     )
 
     val totalScoreString = NumberFormat.getNumberInstance().format(totalScore)
+
+    LaunchedEffect(round.URL, imageLoadingRetryCount) {
+        Log.d(
+            "RoundPlayPage",
+            "status=${imageLoadingStatus} Loading photo from URL: ${round.URL}, retryCount: $imageLoadingRetryCount"
+        )
+
+        imageLoadingStatus = "LOADING"
+
+        if (imageLoadingRetryCount > 0) {
+            delay(1000)
+        }
+
+        val url =
+            round.URL + if (imageLoadingRetryCount > 0) "?retry=$imageLoadingRetryCount" else ""
+        imageRequest = ImageRequest.Builder(context)
+            .data(url)
+            .build()
+        val result = ImageLoader(context).execute(imageRequest!!)
+
+        if (result is SuccessResult) {
+            imageLoadingStatus = "SUCCESS"
+        } else {
+            imageLoadingStatus = "ERROR"
+        }
+    }
 
     BoxWithConstraints(modifier = modifier) {
         if (maxWidth > maxHeight) {
@@ -85,7 +123,14 @@ fun RoundPlayPage(
                         )
                     }
                     when (selectedTabIndex) {
-                        0 -> PhotoPage(round, photoZoomState, modifier)
+                        0 -> PhotoPage(
+                            photoZoomState,
+                            imageRequest,
+                            imageLoadingStatus,
+                            onRetry = { imageLoadingRetryCount++ },
+                            modifier
+                        )
+
                         1 -> MapPage(
                             onPositionGuessChange = { positionGuess = it },
                             positionGuess = positionGuess,
@@ -154,7 +199,14 @@ fun RoundPlayPage(
                 }
                 Column(modifier = Modifier.weight(1f)) {
                     when (selectedTabIndex) {
-                        0 -> PhotoPage(round, photoZoomState, modifier)
+                        0 -> PhotoPage(
+                            photoZoomState,
+                            imageRequest,
+                            imageLoadingStatus,
+                            onRetry = { imageLoadingRetryCount++ },
+                            modifier
+                        )
+
                         1 -> MapPage(
                             onPositionGuessChange = { positionGuess = it },
                             positionGuess = positionGuess,
