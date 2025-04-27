@@ -98,6 +98,19 @@ class MainActivity : ComponentActivity() {
                 loadingStatus = "LOADED"
             }
 
+            suspend fun showNewDailySnackbar() {
+                if (snackbarHostState.showSnackbar(
+                        message = "New daily available",
+                        actionLabel = "Update",
+                        withDismissAction = true,
+                    ) == SnackbarResult.ActionPerformed
+                ) {
+                    // Trigger a fresh round fetch.
+                    // One could also just update the rounds list here, but this way we're sure to always get the latest data.
+                    fetchNewRounds()
+                }
+            }
+
             // Load saved state when the app starts
             LaunchedEffect(Unit) {
                 try {
@@ -107,24 +120,25 @@ class MainActivity : ComponentActivity() {
                     val savedCurrentPage = appStateRepository.getSavedCurrentPage()
 
                     if (savedRounds != null) {
+                        Log.d("TimeGuessr", "Using saved state")
+
                         // Check if there are new rounds available
                         val newRounds = roundDataSource.fetchRounds()
                         if (newRounds != null && newRounds[0].No > savedRounds[0].No) {
-                            // If new rounds are available, use them and reset the state
-                            rounds = newRounds
-                            currentRoundIndex = 0
-                            roundResults = emptyList()
-                            currentPage = Page.RoundPlayPage
-                        } else {
-                            // Otherwise use the saved state
-                            rounds = savedRounds
-                            roundResults = savedRoundResults
-                            currentRoundIndex = savedCurrentRoundIndex
-                            currentPage = savedCurrentPage
+                            Log.d("TimeGuessr", "New rounds available")
+                            endGameRefreshCorountineScope.launch {
+                                showNewDailySnackbar()
+                            }
                         }
+
+                        rounds = savedRounds
+                        roundResults = savedRoundResults
+                        currentRoundIndex = savedCurrentRoundIndex
+                        currentPage = savedCurrentPage
                         loadingStatus = "LOADED"
                     } else {
                         // No saved state, proceed with initial loading
+                        Log.d("TimeGuessr", "No saved state found, fetching new rounds")
                         fetchNewRounds()
                     }
                 } catch (e: Exception) {
@@ -136,6 +150,7 @@ class MainActivity : ComponentActivity() {
             // Save state whenever it changes
             LaunchedEffect(rounds, roundResults, currentRoundIndex, currentPage) {
                 if (rounds != null) {
+                    Log.d("TimeGuessr", "Saving app state")
                     coroutineScope.launch {
                         appStateRepository.saveAppState(
                             rounds = rounds,
@@ -161,16 +176,7 @@ class MainActivity : ComponentActivity() {
                             val newRoundsList = roundDataSource.fetchRounds()
                             if (newRoundsList != null && rounds != null && newRoundsList[0].No > rounds!![0].No) {
                                 Log.d("TimeGuessr", "New daily available")
-                                if (snackbarHostState.showSnackbar(
-                                        message = "New daily available",
-                                        actionLabel = "Update",
-                                        withDismissAction = true,
-                                    ) == SnackbarResult.ActionPerformed
-                                ) {
-                                    // Trigger a fresh round fetch.
-                                    // One could also just update the rounds list here, but this way we're sure to always get the latest data.
-                                    retryRoundFetchTrigger++
-                                }
+                                showNewDailySnackbar()
                             }
                         } catch (e: Exception) {
                             Log.e("TimeGuessr", "Error in coroutine fetching end game new daily", e)
