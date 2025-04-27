@@ -4,6 +4,15 @@ This is an unofficial Android client for playing the daily game of TimeGuessr.
 
 My goal was to have a simple app, where one can play the daily game in native controls, making it easy and nice to use.
 
+## Install
+
+- Go to [Timeguessr Mobile Testers](https://groups.google.com/g/timeguessr-mobile-testers)
+- Click join group
+- Go to the [Play Store page](https://play.google.com/store/apps/details?id=me.aerion.timeguessr)
+- Install 🎉
+
+_As this app is in beta, it's required to join the Google Group in order to see it on the store page._
+
 ## Screenshots
 
 ### Round result
