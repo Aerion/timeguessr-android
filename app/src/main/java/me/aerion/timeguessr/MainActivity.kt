@@ -99,6 +99,11 @@ class MainActivity : ComponentActivity() {
             }
 
             suspend fun showNewDailySnackbar() {
+                if (snackbarHostState.currentSnackbarData != null) {
+                    // Snackbar is already shown
+                    return
+                }
+
                 if (snackbarHostState.showSnackbar(
                         message = "New daily available",
                         actionLabel = "Update",
