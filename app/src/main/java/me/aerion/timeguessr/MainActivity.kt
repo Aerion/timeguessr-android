@@ -298,6 +298,7 @@ class MainActivity : ComponentActivity() {
                         )
 
                         Page.EndGamePage -> EndGamePage(
+                            rounds = rounds!!,
                             roundResults = roundResults,
                             dailyNumber = currentRound.No.toInt(),
                             modifier = Modifier.fillMaxSize()
