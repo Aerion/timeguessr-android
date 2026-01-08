@@ -3,6 +3,7 @@ package me.aerion.timeguessr
 import android.content.Intent
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -16,12 +17,15 @@ import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.KeyboardArrowLeft
+import androidx.compose.material.icons.filled.KeyboardArrowRight
 import androidx.compose.material.icons.filled.Share
 import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -31,6 +35,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.google.android.gms.maps.model.LatLng
@@ -130,34 +135,116 @@ private fun ReviewModeView(
 ) {
     val pagerState = rememberPagerState(initialPage = 0) { rounds.size }
 
-    Column(modifier = modifier) {
-        // Top bar with back button and page indicator
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(8.dp),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            IconButton(onClick = onExitReview) {
-                Icon(Icons.Default.ArrowBack, contentDescription = "Back to summary")
+    Box(modifier = modifier) {
+        Column(modifier = Modifier.fillMaxSize()) {
+            // Top bar with back button and page indicator
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(8.dp),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                IconButton(onClick = onExitReview) {
+                    Icon(Icons.Default.ArrowBack, contentDescription = "Back to summary")
+                }
+                SwipeIndicator(
+                    currentPage = pagerState.currentPage,
+                    totalPages = rounds.size
+                )
+                Spacer(modifier = Modifier.width(48.dp)) // Balance layout
             }
-            Text(
-                "Round ${pagerState.currentPage + 1}/${rounds.size}",
-                style = MaterialTheme.typography.titleMedium
-            )
-            Spacer(modifier = Modifier.width(48.dp)) // Balance layout
+
+            // HorizontalPager for swiping between rounds
+            HorizontalPager(
+                state = pagerState,
+                modifier = Modifier.weight(1f)
+            ) { page ->
+                RoundReviewPage(
+                    round = rounds[page],
+                    roundResult = roundResults[page],
+                    modifier = Modifier.fillMaxSize()
+                )
+            }
         }
 
-        // HorizontalPager for swiping between rounds
-        HorizontalPager(
-            state = pagerState,
-            modifier = Modifier.weight(1f)
-        ) { page ->
-            RoundReviewPage(
-                round = rounds[page],
-                roundResult = roundResults[page],
-                modifier = Modifier.fillMaxSize()
+        // Left arrow indicator
+        if (pagerState.currentPage > 0) {
+            Surface(
+                modifier = Modifier
+                    .align(Alignment.BottomStart)
+                    .padding(start = 16.dp, bottom = 16.dp),
+                color = MaterialTheme.colorScheme.surface.copy(alpha = 0.7f),
+                shape = MaterialTheme.shapes.medium
+            ) {
+                Icon(
+                    imageVector = Icons.Default.KeyboardArrowLeft,
+                    contentDescription = "Previous round",
+                    modifier = Modifier.padding(12.dp),
+                    tint = MaterialTheme.colorScheme.onSurface
+                )
+            }
+        }
+
+        // Right arrow indicator
+        if (pagerState.currentPage < rounds.size - 1) {
+            Surface(
+                modifier = Modifier
+                    .align(Alignment.BottomEnd)
+                    .padding(end = 16.dp, bottom = 16.dp),
+                color = MaterialTheme.colorScheme.surface.copy(alpha = 0.7f),
+                shape = MaterialTheme.shapes.medium
+            ) {
+                Icon(
+                    imageVector = Icons.Default.KeyboardArrowRight,
+                    contentDescription = "Next round",
+                    modifier = Modifier.padding(12.dp),
+                    tint = MaterialTheme.colorScheme.onSurface
+                )
+            }
+        }
+    }
+}
+
+@Composable
+private fun SwipeIndicator(
+    currentPage: Int,
+    totalPages: Int,
+    modifier: Modifier = Modifier
+) {
+    Surface(
+        modifier = modifier,
+        color = MaterialTheme.colorScheme.surface.copy(alpha = 0.85f),
+        shape = MaterialTheme.shapes.medium
+    ) {
+        Row(
+            modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
+            horizontalArrangement = Arrangement.spacedBy(12.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text(
+                text = "←",
+                style = MaterialTheme.typography.titleMedium,
+                color = if (currentPage > 0) {
+                    MaterialTheme.colorScheme.onSurface
+                } else {
+                    MaterialTheme.colorScheme.onSurface.copy(alpha = 0.3f)
+                }
+            )
+            Text(
+                text = "Round ${currentPage + 1}/$totalPages",
+                style = MaterialTheme.typography.titleMedium,
+                fontWeight = FontWeight.Medium,
+                color = MaterialTheme.colorScheme.onSurface
+            )
+            Text(
+                text = "→",
+                style = MaterialTheme.typography.titleMedium,
+                color = if (currentPage < totalPages - 1) {
+                    MaterialTheme.colorScheme.onSurface
+                } else {
+                    MaterialTheme.colorScheme.onSurface.copy(alpha = 0.3f)
+                }
             )
         }
     }
