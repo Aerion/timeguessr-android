@@ -1,6 +1,7 @@
 package me.aerion.timeguessr
 
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -9,8 +10,12 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Fullscreen
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -19,6 +24,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -160,6 +166,8 @@ fun RoundDescriptionCard(
     subMaxScoreString: String,
     modifier: Modifier = Modifier
 ) {
+    var showFullscreenImage by remember { mutableStateOf(false) }
+
     Card(
         modifier = modifier
     ) {
@@ -170,15 +178,37 @@ fun RoundDescriptionCard(
                 .fillMaxWidth()
         ) {
             Text(text = round.Description, fontStyle = FontStyle.Italic)
-            ZoomableAsyncImage(
-                model = round.URL,
-                contentDescription = null,
+
+            Box(
                 modifier = Modifier
                     .weight(1f)
                     .padding(vertical = 4.dp)
-                    .fillMaxSize(),
-                onDoubleClick = IncrementalZoomOnDoubleClick()
-            )
+                    .fillMaxSize()
+            ) {
+                ZoomableAsyncImage(
+                    model = round.URL,
+                    contentDescription = null,
+                    modifier = Modifier.fillMaxSize(),
+                    onDoubleClick = IncrementalZoomOnDoubleClick()
+                )
+
+                // Fullscreen button overlay
+                Surface(
+                    modifier = Modifier
+                        .align(Alignment.TopEnd)
+                        .padding(8.dp),
+                    color = MaterialTheme.colorScheme.surface.copy(alpha = 0.7f),
+                    shape = MaterialTheme.shapes.small
+                ) {
+                    IconButton(onClick = { showFullscreenImage = true }) {
+                        Icon(
+                            imageVector = Icons.Default.Fullscreen,
+                            contentDescription = "View fullscreen",
+                            tint = MaterialTheme.colorScheme.onSurface
+                        )
+                    }
+                }
+            }
             Text(
                 buildAnnotatedString {
                     withStyle(
@@ -225,6 +255,13 @@ fun RoundDescriptionCard(
                 }
             )
         }
+    }
+
+    if (showFullscreenImage) {
+        FullscreenImageDialog(
+            imageUrl = round.URL,
+            onDismiss = { showFullscreenImage = false }
+        )
     }
 }
 
